@@ -1,19 +1,29 @@
 import sys
+import os
 
 import __main__
+import style
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QFont, QIcon, QImage, QPainter, QPixmap, QGuiApplication
+from PySide2.QtGui import (QFont, QGuiApplication, QIcon, QImage, QPainter,
+                           QPixmap)
 from PySide2.QtWidgets import (QAbstractItemView, QAction, QApplication,
                                QCheckBox, QDesktopWidget, QFileDialog, QFrame,
                                QGridLayout, QHeaderView, QLabel, QLineEdit,
                                QMainWindow, QMessageBox, QPushButton, QSlider,
                                QTableWidget, QTableWidgetItem, QTabWidget,
                                QTextEdit, QWidget)
+from utils import *
 from xlrd import open_workbook
 from xlwt import Font, Workbook, easyxf
-import style
-from utils import *
 
+
+def get_path(file):
+    '''Get path to resource'''
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, file)
+    else:
+        return os.path.join(os.path.abspath("."), file)
+    
 
 class my_tab_1_class(QWidget):
     def __init__(self):
@@ -228,11 +238,11 @@ class InfWindow(QWidget):
         title_lable = QLabel('Формат таблицы для открытия')
 
         picture_label_1 = QLabel()
-        picture_1 = QPixmap('pic1.jpg')
+        picture_1 = QPixmap(get_path('assets/pic1.jpg'))
         picture_label_1.setPixmap(picture_1)
 
         picture_label_2 = QLabel()
-        picture_2 = QPixmap('pic2.jpg')
+        picture_2 = QPixmap(get_path('assets/pic2.jpg'))
         picture_label_2.setPixmap(picture_2)
 
         layout = QGridLayout()
@@ -245,7 +255,7 @@ class InfWindow(QWidget):
         self.setFont(QFont('Arial', 12))
         self.setMaximumSize(640, 480)
         self.setWindowTitle('Формат таблицы для открытия')
-        self.setWindowIcon(QIcon('App.ico'))
+        self.setWindowIcon(QIcon(get_path('assets/App.ico')))
 
 
 class MainWindow(QMainWindow):
