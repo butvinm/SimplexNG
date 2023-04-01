@@ -1,18 +1,17 @@
-import sys
 import os
+import sys
 
-import __main__
 import style
 from PySide2.QtCore import Qt
 from PySide2.QtGui import (QFont, QGuiApplication, QIcon, QImage, QPainter,
                            QPixmap)
 from PySide2.QtWidgets import (QAbstractItemView, QAction, QApplication,
-                               QCheckBox, QDesktopWidget, QFileDialog, QFrame,
-                               QGridLayout, QHeaderView, QLabel, QLineEdit,
-                               QMainWindow, QMessageBox, QPushButton, QSlider,
-                               QTableWidget, QTableWidgetItem, QTabWidget,
-                               QTextEdit, QWidget)
-from utils import *
+                               QCheckBox, QFileDialog, QFrame, QGridLayout,
+                               QLabel, QMainWindow, QMessageBox, QPushButton,
+                               QSlider, QTableWidget, QTableWidgetItem,
+                               QTabWidget, QTextEdit, QWidget)
+from utils_deprecated import *
+from widgets.TaskTab import TaskTab
 from xlrd import open_workbook
 from xlwt import Font, Workbook, easyxf
 
@@ -23,12 +22,12 @@ def get_path(file):
         return os.path.join(sys._MEIPASS, file)
     else:
         return os.path.join(os.path.abspath("."), file)
-    
+
 
 class my_tab_1_class(QWidget):
     def __init__(self):
         super().__init__()
-        
+
         input_label = QLabel('Условие')
         ########
         output_label = QLabel('Решение')
@@ -52,7 +51,6 @@ class my_tab_1_class(QWidget):
         self.my_table_1.setHorizontalHeader(my_h_header)
         my_v_header = v_header_class(self.my_table_1)
         self.my_table_1.setVerticalHeader(my_v_header)
-        
 
         for i in range(4):
             for j in range(4):
@@ -203,18 +201,6 @@ class my_tab_2_class(QWidget):
         p.end()
 
 
-class h_header_class(QHeaderView):
-    def __init__(self, parent):
-        QHeaderView.__init__(self, Qt.Horizontal, parent)
-        self.setSectionResizeMode(QHeaderView.Stretch)
-
-
-class v_header_class(QHeaderView):
-    def __init__(self, parent):
-        QHeaderView.__init__(self, Qt.Vertical, parent)
-        self.setSectionResizeMode(QHeaderView.Stretch)
-
-
 class TheoryWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -326,9 +312,9 @@ class MainWindow(QMainWindow):
         ########
 
         my_tab = QTabWidget(self)
-        
-        self.my_tab_1 = my_tab_1_class()
-        
+
+        self.my_tab_1 = TaskTab(self)
+
         self.my_tab_2 = my_tab_2_class()
 
         my_tab.addTab(self.my_tab_1, 'Решение')
@@ -340,16 +326,16 @@ class MainWindow(QMainWindow):
 
         central_widget = QWidget(self)
         central_widget.setLayout(main_layout)
-        
+
         self.setCentralWidget(central_widget)
         self.setMinimumSize(500, 900)
         self.setWindowTitle('Simplex')
         self.setWindowIcon(QIcon('App.ico'))
         screen_height = QGuiApplication.primaryScreen().geometry().height()
         f = style.Style(screen_height)
+        print(f.style)
         self.setStyleSheet(f.style)
         self.showMaximized()
-        
 
     def OpenTask(self):
         filename = QFileDialog.getOpenFileName(
@@ -682,7 +668,7 @@ class MainWindow(QMainWindow):
             ws.write(11, 3, 'Конечное')
 
 
-if __name__ == "__main__":   
+if __name__ == "__main__":
     app = QApplication([])
     main_window = MainWindow()
     sys.exit(app.exec_())
