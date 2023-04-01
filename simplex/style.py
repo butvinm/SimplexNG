@@ -1,19 +1,18 @@
 class Style:
-    def __init__(self, height):
+    def __init__(self, height: float):
         replacement = {
-            '@padding' : f'{round(height/200)}px',
-            '@font-size' : f'{round(height/38.5)}px',
-            '@button-height' : f'{round(height/38.5+7)}px',
-            '@button-border-radius' : f'{round(height/38.5+7)//2}px',
-            '@tab-height' : f'{round(height/26)}px',
-            '@tab-border-radius' : f'{round(height/52+5)}px',
-            '@header-height' : f'{round(height/38.5+22)}px',
-            '@header-width' : f'{round(height/38.5+12)}px',
+            '@padding': f'{round(height/200)}px',
+            '@font-size': f'{round(height/38.5)}px',
+            '@button-height': f'{round(height/38.5+7)}px',
+            '@button-border-radius': f'{round(height/38.5+7)//2}px',
+            '@tab-height': f'{round(height/26)}px',
+            '@tab-border-radius': f'{round(height/52+5)}px',
+            '@header-height': f'{round(height/38.5+22)}px',
+            '@header-width': f'{round(height/38.5+12)}px',
             '@checkbox-size': f'{round(height/52)}px',
             '@checkbox-border-radius': f'{round(height/52)//2+2}px',
             '@tableitem-border-radius': f'{round(height/50)}px',
         }
-
 
         self.style = """
                 * {font-family: "Arial", "Helvetica", "sans-serif";   font-size: @font-size;}
