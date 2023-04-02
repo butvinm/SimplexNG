@@ -5,10 +5,9 @@ import style
 from PySide2.QtCore import Qt
 from PySide2.QtGui import (QFont, QGuiApplication, QIcon, QImage, QPainter,
                            QPixmap)
-from PySide2.QtWidgets import (QAbstractItemView, QAction, QApplication,
-                               QCheckBox, QFileDialog, QFrame, QGridLayout,
-                               QLabel, QMainWindow, QMessageBox, QPushButton,
-                               QSlider, QTableWidget, QTableWidgetItem,
+from PySide2.QtWidgets import (QAction, QApplication, QCheckBox, QFileDialog,
+                               QFrame, QGridLayout, QLabel, QMainWindow,
+                               QMessageBox, QSlider, QTableWidgetItem,
                                QTabWidget, QTextEdit, QWidget)
 from utils_deprecated import *
 from widgets.TaskTab import TaskTab
@@ -22,96 +21,6 @@ def get_path(file):
         return os.path.join(sys._MEIPASS, file)
     else:
         return os.path.join(os.path.abspath("."), file)
-
-
-class my_tab_1_class(QWidget):
-    def __init__(self):
-        super().__init__()
-
-        input_label = QLabel('Условие')
-        ########
-        output_label = QLabel('Решение')
-        ########
-        table_clear_button = QPushButton('Очистить', self)
-        table_clear_button.setCursor(Qt.PointingHandCursor)
-        table_clear_button.clicked.connect(self.TableClear)
-        ########
-        self.output_mod_button = QPushButton('Максимум', self)
-        self.output_mod_button
-        self.output_mod_button.clicked.connect(self.ModChange)
-        self.mod = 0
-
-        ########
-
-        self.my_table_1 = QTableWidget(4, 4, self)
-        self.my_table_1.setHorizontalHeaderLabels(['A1', 'A2', 'A3', 'B1'])
-        self.my_table_1.setVerticalHeaderLabels(['A1', 'A2', 'A3', 'B2'])
-
-        my_h_header = h_header_class(self.my_table_1)
-        self.my_table_1.setHorizontalHeader(my_h_header)
-        my_v_header = v_header_class(self.my_table_1)
-        self.my_table_1.setVerticalHeader(my_v_header)
-
-        for i in range(4):
-            for j in range(4):
-                item = QTableWidgetItem()
-                self.my_table_1.setItem(i, j, item)
-
-        self.my_table_1.cellChanged.connect(self.TableChange)
-        self.input_mod = 0
-
-        #########
-
-        self.my_table_2 = QTableWidget(4, 4, self)
-        self.my_table_2.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.my_table_2.setHorizontalHeaderLabels(['A1', 'A2', 'A3', 'B1'])
-        self.my_table_2.setVerticalHeaderLabels(['A1', 'A2', 'A3', 'B2'])
-
-        my_h_header = h_header_class(self.my_table_2)
-        self.my_table_2.setHorizontalHeader(my_h_header)
-        my_v_header = v_header_class(self.my_table_2)
-        self.my_table_2.setVerticalHeader(my_v_header)
-
-        for i in range(4):
-            for j in range(4):
-                item = QTableWidgetItem()
-                self.my_table_2.setItem(i, j, item)
-
-        ########
-
-        box_layout_1 = QGridLayout()
-        box_layout_1.setSpacing(15)
-
-        box_layout_1.setRowStretch(0, 0)
-        box_layout_1.setRowStretch(1, 1)
-        box_layout_1.setRowStretch(2, 0)
-        box_layout_1.setRowStretch(3, 1)
-
-        box_layout_1.addWidget(input_label, 0, 0)
-        box_layout_1.addWidget(table_clear_button, 0, 2)
-        box_layout_1.addWidget(self.my_table_1, 1, 0, 1, 0)
-        box_layout_1.addWidget(output_label, 2, 0)
-        box_layout_1.addWidget(self.output_mod_button, 2, 2)
-        box_layout_1.addWidget(self.my_table_2, 3, 0, 1, 0)
-
-        self.setLayout(box_layout_1)
-
-    #########
-
-    def ModChange(self):
-        mod_change(self)
-        self.TableChange()
-
-    def TableClear(self):
-        table_clear(self)
-
-    def TableChange(self):
-        a, b, self.input_mod, able = input_data(self.my_table_1)
-
-        if able and find_points(b):
-            ans = answer(a, b, find_points(b))
-            answer_view(self, b, ans[0], ans[1],
-                        ans[2], ans[3], ans[4], ans[5])
 
 
 class my_tab_2_class(QWidget):
@@ -284,7 +193,6 @@ class MainWindow(QMainWindow):
         M_Fail.addAction(All_Save)
         M_Fail.addAction(Graph_Save)
         M_Fail.addAction(Programm_Exit)
-
         '''Theory'''
         M_Inf = my_menubar.addMenu('Справка')
 
@@ -333,7 +241,6 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon('App.ico'))
         screen_height = QGuiApplication.primaryScreen().geometry().height()
         f = style.Style(screen_height)
-        print(f.style)
         self.setStyleSheet(f.style)
         self.showMaximized()
 
