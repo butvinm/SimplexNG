@@ -62,7 +62,6 @@ class TaskTab(QWidget):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.solve_mode = 'Minimum'
-
         self.init_widgets()
 
     def init_widgets(self):
