@@ -9,18 +9,10 @@ from PySide2.QtWidgets import (QAction, QApplication, QCheckBox, QFileDialog,
                                QFrame, QGridLayout, QLabel, QMainWindow,
                                QMessageBox, QSlider, QTableWidgetItem,
                                QTabWidget, QTextEdit, QWidget)
-from utils_deprecated import *
 from widgets import GraphTab, TaskTab
+from utils.path import get_path
 from xlrd import open_workbook
 from xlwt import Font, Workbook, easyxf
-
-
-def get_path(file):
-    '''Get path to resource'''
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, file)
-    else:
-        return os.path.join(os.path.abspath("."), file)
 
 
 class TheoryWindow(QWidget):
@@ -35,7 +27,7 @@ class TheoryWindow(QWidget):
         t_layout.addWidget(t_edit, 0, 0)
         self.setLayout(t_layout)
         self.setFont(QFont('Arial', 12))
-        self.setWindowIcon(QIcon('App.ico'))
+        self.setWindowIcon(QIcon(get_path('assets/App.ico')))
         self.setWindowTitle('Теория')
 
 
@@ -151,7 +143,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
         self.setMinimumSize(500, 900)
         self.setWindowTitle('Simplex')
-        self.setWindowIcon(QIcon('App.ico'))
+        self.setWindowIcon(QIcon(get_path('assets/App.ico')))
         screen_height = QGuiApplication.primaryScreen().geometry().height()
         f = style.Style(screen_height)
         self.setStyleSheet(f.style)
