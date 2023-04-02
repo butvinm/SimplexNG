@@ -24,7 +24,7 @@ class BaseTable(QTableWidget):
     def clear_data(self):
         for i in range(self.rowCount()):
             for j in range(self.columnCount()):
-                self.setItem(i, j, QTableWidgetItem())
+                self.setItem(i, j, QTableWidgetItem(''))
 
 
 class TaskDataTable(BaseTable):
@@ -111,8 +111,8 @@ class TaskTab(QWidget):
         self.update_answer()
 
     def clear_tables(self):
-        self.task_data_table.clear()
-        self.answer_table.clear()
+        self.task_data_table.clear_data()
+        self.answer_table.clear_data()
 
     def update_answer(self):
         table_data = self.task_data_table.get_data()
