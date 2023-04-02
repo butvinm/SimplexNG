@@ -4,8 +4,8 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (QAbstractItemView, QGridLayout, QHeaderView,
                                QLabel, QPushButton, QTableWidget,
                                QTableWidgetItem, QWidget)
-from utils.math import get_plot_points, get_max_solution, get_min_solution
-
+from utils.math import get_plot_points, get_max_solution, get_min_solution, get_task_data
+import context
 
 class BaseTable(QTableWidget):
     def __init__(self, rows: int, columns: int, parent: QWidget):
@@ -61,7 +61,6 @@ class AnswerTable(BaseTable):
 class TaskTab(QWidget):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
-        self.solve_mode = 'Minimum'
         self.init_widgets()
 
     def init_widgets(self):
@@ -101,11 +100,11 @@ class TaskTab(QWidget):
         self.setLayout(layout)
 
     def change_solve_mode(self):
-        if self.solve_mode == 'Maximum':
-            self.solve_mode = 'Minimum'
+        if context.solve_mode == 'Maximum':
+            context.solve_mode = 'Minimum'
             self.change_solve_mode_button.setText('Минимум')
         else:
-            self.solve_mode = 'Maximum'
+            context.solve_mode = 'Maximum'
             self.change_solve_mode_button.setText('Максимум')
 
         self.update_answer()
@@ -115,13 +114,12 @@ class TaskTab(QWidget):
         self.answer_table.clear_data()
 
     def update_answer(self):
-        table_data = self.task_data_table.get_data()
-
-        a_data, b_data = self.get_task_data(table_data)
+        context.input_data = self.task_data_table.get_data()
+        a_data, b_data = get_task_data(context.input_data)
 
         plot_points = get_plot_points(b_data)
         if plot_points:
-            if self.solve_mode == 'Minimum':
+            if context.solve_mode == 'Minimum':
                 answer = get_min_solution(a_data, b_data, plot_points)
             else:
                 answer = get_max_solution(a_data, b_data, plot_points)
@@ -130,32 +128,4 @@ class TaskTab(QWidget):
 
         # answer_view(self, b, ans[0], ans[1], ans[2], ans[3], ans[4], ans[5])
 
-    def get_task_data(self, data: list[list[Optional[float]]]) -> tuple[list[float], list[float]]:
-        """Get task data from table depends on data alignment and return A's and B's values"""
-
-        align = 'Horizontal' if data[1][2] is not None else 'Vertical'
-
-        if align == 'Horizontal':
-            a_data = [
-                data[0][0], data[0][1], data[0][2],
-                data[1][0], data[1][1], data[1][2]
-            ]
-            b_data = [
-                data[0][3], data[1][3],
-                data[3][0], data[3][1], data[3][2]
-            ]
-        else:
-            a_data = [
-                data[2][0], data[1][0], data[0][0],
-                data[2][1], data[1][1], data[0][1]
-            ]
-
-            b_data = [
-                data[3][0], data[3][1],
-                data[2][3], data[1][3], data[0][3]
-            ]
-
-        if any(value is None for value in a_data + b_data):
-            raise ValueError('Incorrect input data: empty items')
-
-        return a_data, b_data  # pyright: reportGeneralTypeIssues=none
+    

@@ -10,7 +10,7 @@ from PySide2.QtWidgets import (QAction, QApplication, QCheckBox, QFileDialog,
                                QMessageBox, QSlider, QTableWidgetItem,
                                QTabWidget, QTextEdit, QWidget)
 from utils_deprecated import *
-from widgets.TaskTab import TaskTab
+from widgets import GraphTab, TaskTab
 from xlrd import open_workbook
 from xlwt import Font, Workbook, easyxf
 
@@ -221,12 +221,12 @@ class MainWindow(QMainWindow):
 
         my_tab = QTabWidget(self)
 
-        self.my_tab_1 = TaskTab(self)
+        self.task_tab = TaskTab(self)
 
-        self.my_tab_2 = my_tab_2_class()
+        self.graph_tab = GraphTab()
 
-        my_tab.addTab(self.my_tab_1, 'Решение')
-        my_tab.addTab(self.my_tab_2, 'График')
+        my_tab.addTab(self.task_tab, 'Решение')
+        my_tab.addTab(self.graph_tab, 'График')
 
         main_layout = QGridLayout()
 
@@ -264,7 +264,7 @@ class MainWindow(QMainWindow):
 
         data = [list(map(str, i)) for i in data]
 
-        k = self.my_tab_1.my_table_1
+        k = self.task_tab.my_table_1
 
         k.setItem(0, 0, QTableWidgetItem(data[2][1]))
         k.setItem(0, 1, QTableWidgetItem(data[2][2]))
@@ -284,7 +284,7 @@ class MainWindow(QMainWindow):
         k.setItem(3, 2, QTableWidgetItem(data[5][3]))
 
     def TaskSave(self):
-        data = input_data(self.my_tab_1.my_table_1)
+        data = input_data(self.task_tab.my_table_1)
 
         filename = QFileDialog.getSaveFileName(
             None, 'Сохранение графика', 'Моя Задача.xls', '*.xls')
@@ -305,7 +305,7 @@ class MainWindow(QMainWindow):
             mb_view = mb.exec_()
 
     def AnswerSave(self):
-        data = input_data(self.my_tab_1.my_table_1)
+        data = input_data(self.task_tab.my_table_1)
 
         try:
             ans = answer(data[0], data[1], find_points(data[1]))
@@ -334,7 +334,7 @@ class MainWindow(QMainWindow):
             mb_view = mb.exec_()
 
     def AllSave(self):
-        data = input_data(self.my_tab_1.my_table_1)
+        data = input_data(self.task_tab.my_table_1)
 
         try:
             ans = answer(data[0], data[1], find_points(data[1]))
@@ -373,7 +373,7 @@ class MainWindow(QMainWindow):
             return
 
         try:
-            self.my_tab_2.graph.save(filename[0], 'PNG')
+            self.graph_tab.graph.save(filename[0], 'PNG')
         except AttributeError:
             mb = QMessageBox(QMessageBox.Critical,
                              "Ошибка", "Пустой график",
@@ -390,7 +390,7 @@ class MainWindow(QMainWindow):
         self.inf_window.show()
 
     def Task1(self):
-        k = self.my_tab_1.my_table_1
+        k = self.task_tab.my_table_1
 
         k.setItem(0, 0, QTableWidgetItem('5'))
         k.setItem(0, 1, QTableWidgetItem('6'))
@@ -406,7 +406,7 @@ class MainWindow(QMainWindow):
         k.setItem(3, 2, QTableWidgetItem('15'))
 
     def Task2(self):
-        k = self.my_tab_1.my_table_1
+        k = self.task_tab.my_table_1
 
         k.setItem(0, 0, QTableWidgetItem('0.7'))
         k.setItem(0, 1, QTableWidgetItem('0.9'))

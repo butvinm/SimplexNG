@@ -1,4 +1,36 @@
 from math import atan, degrees
+from typing import Optional
+
+
+def get_task_data(data: list[list[Optional[float]]]) -> tuple[list[float], list[float]]:
+    """Get task data from table depends on data alignment and return A's and B's values"""
+
+    align = 'Horizontal' if data[1][2] is not None else 'Vertical'
+
+    if align == 'Horizontal':
+        a_data = [
+            data[0][0], data[0][1], data[0][2],
+            data[1][0], data[1][1], data[1][2]
+        ]
+        b_data = [
+            data[0][3], data[1][3],
+            data[3][0], data[3][1], data[3][2]
+        ]
+    else:
+        a_data = [
+            data[2][0], data[1][0], data[0][0],
+            data[2][1], data[1][1], data[0][1]
+        ]
+
+        b_data = [
+            data[3][0], data[3][1],
+            data[2][3], data[1][3], data[0][3]
+        ]
+
+    if any(value is None for value in a_data + b_data):
+        raise ValueError('Incorrect input data: empty items')
+
+    return a_data, b_data  # pyright: reportGeneralTypeIssues=none
 
 
 def get_plot_points(b_data: list[float]) -> dict[int, tuple[float, float]]:
