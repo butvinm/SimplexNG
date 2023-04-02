@@ -4,7 +4,7 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (QAbstractItemView, QGridLayout, QHeaderView,
                                QLabel, QPushButton, QTableWidget,
                                QTableWidgetItem, QWidget)
-from utils.math import get_plot_points, get_solution
+from utils.math import get_plot_points, get_max_solution, get_min_solution
 
 
 class BaseTable(QTableWidget):
@@ -30,8 +30,8 @@ class BaseTable(QTableWidget):
 class TaskDataTable(BaseTable):
     def __init__(self, parent: QWidget):
         super().__init__(4, 4, parent)
-        self.setVerticalHeaderLabels(['A1', 'A2', 'A3', 'B2'])
-        self.setHorizontalHeaderLabels(['A1', 'A2', 'A3', 'B1'])
+        self.setVerticalHeaderLabels(['A1', 'A2', 'A3', 'B2'])  # type: ignore
+        self.setHorizontalHeaderLabels(['A1', 'A2', 'A3', 'B1'])  # type: ignore
 
     def get_data(self) -> list[list[Optional[float]]]:
         data: list[list[Optional[float]]] = []
@@ -51,8 +51,8 @@ class TaskDataTable(BaseTable):
 class AnswerTable(BaseTable):
     def __init__(self, parent: QWidget):
         super().__init__(4, 4, parent)
-        self.setVerticalHeaderLabels(['A1', 'A2', 'A3', 'B2'])
-        self.setHorizontalHeaderLabels(['A1', 'A2', 'A3', 'B1'])
+        self.setVerticalHeaderLabels(['A1', 'A2', 'A3', 'B2'])  # type: ignore
+        self.setHorizontalHeaderLabels(['A1', 'A2', 'A3', 'B1'])  # type: ignore
 
         # disable data editing
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -80,11 +80,11 @@ class TaskTab(QWidget):
 
         self.clear_table_button = QPushButton('Очистить', self)
         self.clear_table_button.setCursor(Qt.PointingHandCursor)
-        self.clear_table_button.clicked.connect(self.clear_tables)
+        self.clear_table_button.clicked.connect(self.clear_tables)  # type: ignore
         layout.addWidget(self.clear_table_button, 0, 2)
 
         self.task_data_table = TaskDataTable(self)
-        self.task_data_table.cellChanged.connect(self.update_answer)
+        self.task_data_table.cellChanged.connect(self.update_answer)  # type: ignore
         layout.addWidget(self.task_data_table, 1, 0, 1, 0)
 
         self.answer_title = QLabel('Решение')
@@ -92,7 +92,7 @@ class TaskTab(QWidget):
 
         self.change_solve_mode_button = QPushButton('Максимум', self)
         self.change_solve_mode_button.setCursor(Qt.PointingHandCursor)
-        self.change_solve_mode_button.clicked.connect(self.change_solve_mode)
+        self.change_solve_mode_button.clicked.connect(self.change_solve_mode)  # type: ignore
         layout.addWidget(self.change_solve_mode_button, 2, 2)
 
         self.answer_table = AnswerTable(self)
@@ -120,8 +120,14 @@ class TaskTab(QWidget):
         a_data, b_data = self.get_task_data(table_data)
 
         plot_points = get_plot_points(b_data)
+        if plot_points:
+            if self.solve_mode == 'Minimum':
+                answer = get_min_solution(a_data, b_data, plot_points)
+            else:
+                answer = get_max_solution(a_data, b_data, plot_points)
 
-        answer = get_solution(a_data, b_data, plot_points)
+            print(answer)
+
         # answer_view(self, b, ans[0], ans[1], ans[2], ans[3], ans[4], ans[5])
 
     def get_task_data(self, data: list[list[Optional[float]]]) -> tuple[list[float], list[float]]:
