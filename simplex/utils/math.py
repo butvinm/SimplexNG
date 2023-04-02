@@ -2,12 +2,18 @@ from math import atan, degrees
 from typing import Optional
 
 
-def get_task_data(data: list[list[Optional[float]]]) -> tuple[list[float], list[float]]:
-    """Get task data from table depends on data alignment and return A's and B's values"""
+def get_data_align(data: list[list[Optional[float]]]) -> str:
+    """Get data alignment depends on data"""
 
     align = 'Horizontal' if data[1][2] is not None else 'Vertical'
 
-    if align == 'Horizontal':
+    return align
+
+
+def get_task_data(data: list[list[Optional[float]]]) -> tuple[list[float], list[float]]:
+    """Get task data from table depends on data alignment and return A's and B's values"""
+
+    if get_data_align(data) == 'Horizontal':
         a_data = [
             data[0][0], data[0][1], data[0][2],
             data[1][0], data[1][1], data[1][2]

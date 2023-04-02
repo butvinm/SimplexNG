@@ -4,8 +4,9 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (QAbstractItemView, QGridLayout, QHeaderView,
                                QLabel, QPushButton, QTableWidget,
                                QTableWidgetItem, QWidget)
-from utils.math import get_plot_points, get_max_solution, get_min_solution, get_task_data
+from utils.math import get_data_align, get_plot_points, get_max_solution, get_min_solution, get_task_data
 import context
+
 
 class BaseTable(QTableWidget):
     def __init__(self, rows: int, columns: int, parent: QWidget):
@@ -120,12 +121,64 @@ class TaskTab(QWidget):
         plot_points = get_plot_points(b_data)
         if plot_points:
             if context.solve_mode == 'Minimum':
-                answer = get_min_solution(a_data, b_data, plot_points)
+                xs, f, endless = get_min_solution(a_data, b_data, plot_points)
             else:
-                answer = get_max_solution(a_data, b_data, plot_points)
+                xs, f, endless = get_max_solution(a_data, b_data, plot_points)
 
-            print(answer)
+            self.view_answer(b_data, xs, f, endless)
 
-        # answer_view(self, b, ans[0], ans[1], ans[2], ans[3], ans[4], ans[5])
+    def view_answer(self, b_data: list[float], xs: list[float], f: float, endless: bool):
+        self.answer_table.clear_data()
 
-    
+        if get_data_align(context.input_data):
+            table_b_data = [
+                QTableWidgetItem(str(b_data[0])),
+                QTableWidgetItem(str(b_data[1])),
+                QTableWidgetItem(str(b_data[2])),
+                QTableWidgetItem(str(b_data[3])),
+                QTableWidgetItem(str(b_data[4]))
+            ]
+            table_xs = [
+                QTableWidgetItem(str(xs[0])),
+                QTableWidgetItem(str(xs[1])),
+                QTableWidgetItem(str(xs[2])),
+                QTableWidgetItem(str(xs[3])),
+                QTableWidgetItem(str(xs[4])),
+                QTableWidgetItem(str(xs[5]))
+            ]
+        else:
+            table_b_data = [
+                QTableWidgetItem(str(b_data[0])),
+                QTableWidgetItem(str(b_data[1])),
+                QTableWidgetItem(str(b_data[4])),
+                QTableWidgetItem(str(b_data[3])),
+                QTableWidgetItem(str(b_data[2]))
+            ]
+            table_xs = [
+                QTableWidgetItem(str(xs[0])),
+                QTableWidgetItem(str(xs[3])),
+                QTableWidgetItem(str(xs[1])),
+                QTableWidgetItem(str(xs[4])),
+                QTableWidgetItem(str(xs[2])),
+                QTableWidgetItem(str(xs[5]))
+            ]
+
+        self.answer_table.setItem(0, 3, table_b_data[0])
+        self.answer_table.setItem(1, 3, table_b_data[1])
+        self.answer_table.setItem(3, 0, table_b_data[2])
+        self.answer_table.setItem(3, 1, table_b_data[3])
+        self.answer_table.setItem(3, 2, table_b_data[4])
+
+        self.answer_table.setItem(0, 0, table_xs[0])
+        self.answer_table.setItem(0, 1, table_xs[1])
+        self.answer_table.setItem(0, 2, table_xs[2])
+        self.answer_table.setItem(1, 0, table_xs[3])
+        self.answer_table.setItem(1, 1, table_xs[4])
+        self.answer_table.setItem(1, 2, table_xs[5])
+
+        self.answer_table.setItem(3, 3, QTableWidgetItem('F='+str(f)))
+
+        if endless:
+            self.answer_table.setItem(2, 2, QTableWidgetItem('Бесконечное'))
+        else:
+            self.answer_table.setItem(2, 2, QTableWidgetItem('Конечное'))
