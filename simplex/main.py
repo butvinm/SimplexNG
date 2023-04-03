@@ -9,26 +9,10 @@ from PySide2.QtWidgets import (QAction, QApplication, QCheckBox, QFileDialog,
                                QFrame, QGridLayout, QLabel, QMainWindow,
                                QMessageBox, QSlider, QTableWidgetItem,
                                QTabWidget, QTextEdit, QWidget)
-from widgets import GraphTab, TaskTab
+from widgets import GraphTab, TaskTab, TheoryWindow
 from utils.path import get_path
 from xlrd import open_workbook
 from xlwt import Font, Workbook, easyxf
-
-
-class TheoryWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-
-        t_edit = QTextEdit()
-        t_edit.setFrameStyle(QFrame.Box)
-        t_edit.setText('Линейное программирование — математическая дисциплина, посвящённая теории и методам решения экстремальных задач на множествах n-мерного векторного пространства, задаваемых системами линейных уравнений и неравенств.')
-        t_edit.setReadOnly(True)
-        t_layout = QGridLayout()
-        t_layout.addWidget(t_edit, 0, 0)
-        self.setLayout(t_layout)
-        self.setFont(QFont('Arial', 12))
-        self.setWindowIcon(QIcon(get_path('assets/App.ico')))
-        self.setWindowTitle('Теория')
 
 
 class InfWindow(QWidget):
@@ -62,6 +46,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        self.theory_window = TheoryWindow()
         ########
         my_menubar = self.menuBar()
 
@@ -103,7 +88,7 @@ class MainWindow(QMainWindow):
 
         Theory_Open = QAction('Открыть теорию', self)
         Theory_Open.setShortcut('Ctrl+T')
-        Theory_Open.triggered.connect(self.TheoryOpen)
+        Theory_Open.triggered.connect(self.open_theory)
 
         Inf_Open = QAction('Справка', self)
         Inf_Open.setShortcut('Ctrl+I')
@@ -286,8 +271,7 @@ class MainWindow(QMainWindow):
                              parent=self)
             mb_view = mb.exec_()
 
-    def TheoryOpen(self):
-        self.theory_window = TheoryWindow()
+    def open_theory(self):
         self.theory_window.showMaximized()
 
     def InfOpen(self):
