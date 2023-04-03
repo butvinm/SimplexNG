@@ -6,17 +6,17 @@ from PySide2.QtWidgets import (QAction, QApplication, QFileDialog, QGridLayout,
                                QMainWindow, QMessageBox, QTableWidgetItem,
                                QTabWidget, QWidget)
 from utils.path import get_path
-from widgets import GraphTab, InfoWindow, TaskTab, TheoryWindow
+from widgets import InfoWindow, TheoryWindow, MainWidget
 from xlrd import open_workbook
 from xlwt import Font, Workbook, easyxf
 
 
 class MainWindow(QMainWindow):
-
     def __init__(self):
         super().__init__()
         self.theory_window = TheoryWindow()
         self.info_window = InfoWindow()
+
         ########
         my_menubar = self.menuBar()
 
@@ -77,25 +77,10 @@ class MainWindow(QMainWindow):
 
         M_Tasks.addAction(Task_1)
         M_Tasks.addAction(Task_2)
-        ########
 
-        my_tab = QTabWidget(self)
+        self.main_widget = MainWidget()
+        self.setCentralWidget(self.main_widget)
 
-        self.task_tab = TaskTab(self)
-
-        self.graph_tab = GraphTab()
-
-        my_tab.addTab(self.task_tab, 'Решение')
-        my_tab.addTab(self.graph_tab, 'График')
-
-        main_layout = QGridLayout()
-
-        main_layout.addWidget(my_tab, 0, 0)
-
-        central_widget = QWidget(self)
-        central_widget.setLayout(main_layout)
-
-        self.setCentralWidget(central_widget)
         self.setMinimumSize(500, 900)
         self.setWindowTitle('Simplex')
         self.setWindowIcon(QIcon(get_path('assets/App.ico')))
