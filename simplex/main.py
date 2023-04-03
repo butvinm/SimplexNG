@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
         Open_Task.triggered.connect(self.OpenTask)
 
         Task_Save = QAction('Сохранить задачу', self)
-        Task_Save.setShortcut('Ctrl+T')
+        Task_Save.setShortcut('Ctrl+S')
         Task_Save.triggered.connect(self.TaskSave)
 
         Answer_Save = QAction('Сохранить решение', self)
