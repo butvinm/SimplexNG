@@ -1,45 +1,14 @@
-import os
 import sys
 
 import style
-from PySide2.QtCore import Qt
-from PySide2.QtGui import (QFont, QGuiApplication, QIcon, QImage, QPainter,
-                           QPixmap)
-from PySide2.QtWidgets import (QAction, QApplication, QCheckBox, QFileDialog,
-                               QFrame, QGridLayout, QLabel, QMainWindow,
-                               QMessageBox, QSlider, QTableWidgetItem,
-                               QTabWidget, QTextEdit, QWidget)
-from widgets import GraphTab, TaskTab, TheoryWindow
+from PySide2.QtGui import QGuiApplication, QIcon
+from PySide2.QtWidgets import (QAction, QApplication, QFileDialog, QGridLayout,
+                               QMainWindow, QMessageBox, QTableWidgetItem,
+                               QTabWidget, QWidget)
 from utils.path import get_path
+from widgets import GraphTab, InfoWindow, TaskTab, TheoryWindow
 from xlrd import open_workbook
 from xlwt import Font, Workbook, easyxf
-
-
-class InfWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-
-        title_lable = QLabel('Формат таблицы для открытия')
-
-        picture_label_1 = QLabel()
-        picture_1 = QPixmap(get_path('assets/pic1.jpg'))
-        picture_label_1.setPixmap(picture_1)
-
-        picture_label_2 = QLabel()
-        picture_2 = QPixmap(get_path('assets/pic2.jpg'))
-        picture_label_2.setPixmap(picture_2)
-
-        layout = QGridLayout()
-
-        layout.addWidget(title_lable, 0, 0)
-        layout.addWidget(picture_label_1, 1, 0)
-        layout.addWidget(picture_label_2, 1, 1)
-
-        self.setLayout(layout)
-        self.setFont(QFont('Arial', 12))
-        self.setMaximumSize(640, 480)
-        self.setWindowTitle('Формат таблицы для открытия')
-        self.setWindowIcon(QIcon(get_path('assets/App.ico')))
 
 
 class MainWindow(QMainWindow):
@@ -47,6 +16,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.theory_window = TheoryWindow()
+        self.info_window = InfoWindow()
         ########
         my_menubar = self.menuBar()
 
@@ -92,7 +62,7 @@ class MainWindow(QMainWindow):
 
         Inf_Open = QAction('Справка', self)
         Inf_Open.setShortcut('Ctrl+I')
-        Inf_Open.triggered.connect(self.InfOpen)
+        Inf_Open.triggered.connect(self.open_info)
 
         M_Inf.addAction(Theory_Open)
         M_Inf.addAction(Inf_Open)
@@ -274,9 +244,8 @@ class MainWindow(QMainWindow):
     def open_theory(self):
         self.theory_window.showMaximized()
 
-    def InfOpen(self):
-        self.inf_window = InfWindow()
-        self.inf_window.show()
+    def open_info(self):
+        self.info_window.show()
 
     def Task1(self):
         k = self.task_tab.my_table_1
