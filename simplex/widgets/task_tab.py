@@ -130,55 +130,49 @@ class TaskTab(QWidget):
     def view_answer(self, b_data: list[float], xs: list[float], f: float, endless: bool):
         self.answer_table.clear_data()
 
-        if get_data_align(context.input_data):
-            table_b_data = [
-                QTableWidgetItem(str(b_data[0])),
-                QTableWidgetItem(str(b_data[1])),
-                QTableWidgetItem(str(b_data[2])),
-                QTableWidgetItem(str(b_data[3])),
-                QTableWidgetItem(str(b_data[4]))
-            ]
-            table_xs = [
-                QTableWidgetItem(str(xs[0])),
-                QTableWidgetItem(str(xs[1])),
-                QTableWidgetItem(str(xs[2])),
-                QTableWidgetItem(str(xs[3])),
-                QTableWidgetItem(str(xs[4])),
-                QTableWidgetItem(str(xs[5]))
-            ]
+        if get_data_align(context.input_data) == 'Vertical':
+            b_items = {
+                (3, 0): b_data[0],
+                (3, 1): b_data[1],
+                (2, 3): b_data[2],
+                (1, 3): b_data[3],
+                (0, 3): b_data[4],
+            }
+            xs_items = {
+                (0, 0): xs[0],
+                (0, 1): xs[1],
+                (1, 0): xs[2],
+                (1, 1): xs[3],
+                (2, 0): xs[4],
+                (2, 1): xs[5],
+            }
         else:
-            table_b_data = [
-                QTableWidgetItem(str(b_data[0])),
-                QTableWidgetItem(str(b_data[1])),
-                QTableWidgetItem(str(b_data[4])),
-                QTableWidgetItem(str(b_data[3])),
-                QTableWidgetItem(str(b_data[2]))
-            ]
-            table_xs = [
-                QTableWidgetItem(str(xs[0])),
-                QTableWidgetItem(str(xs[3])),
-                QTableWidgetItem(str(xs[1])),
-                QTableWidgetItem(str(xs[4])),
-                QTableWidgetItem(str(xs[2])),
-                QTableWidgetItem(str(xs[5]))
-            ]
+            b_items = {
+                (0, 3): b_data[0],
+                (1, 3): b_data[1],
+                (3, 0): b_data[2],
+                (3, 1): b_data[3],
+                (3, 2): b_data[4],
+            }
+            xs_items = {
+                (0, 0): xs[0],
+                (0, 1): xs[1],
+                (0, 2): xs[2],
+                (1, 0): xs[3],
+                (1, 1): xs[4],
+                (1, 2): xs[5],
+            }
 
-        self.answer_table.setItem(0, 3, table_b_data[0])
-        self.answer_table.setItem(1, 3, table_b_data[1])
-        self.answer_table.setItem(3, 0, table_b_data[2])
-        self.answer_table.setItem(3, 1, table_b_data[3])
-        self.answer_table.setItem(3, 2, table_b_data[4])
+        for pos, b in b_items.items():
+            self.answer_table.setItem(pos[0], pos[1], QTableWidgetItem(str(b)))
 
-        self.answer_table.setItem(0, 0, table_xs[0])
-        self.answer_table.setItem(0, 1, table_xs[1])
-        self.answer_table.setItem(0, 2, table_xs[2])
-        self.answer_table.setItem(1, 0, table_xs[3])
-        self.answer_table.setItem(1, 1, table_xs[4])
-        self.answer_table.setItem(1, 2, table_xs[5])
+        for pos, x in xs_items.items():
+            self.answer_table.setItem(pos[0], pos[1], QTableWidgetItem(str(x)))
 
-        self.answer_table.setItem(3, 3, QTableWidgetItem('F='+str(f)))
+        self.answer_table.setItem(3, 3, QTableWidgetItem('F=' + str(f)))
 
         if endless:
             self.answer_table.setItem(2, 2, QTableWidgetItem('Бесконечное'))
         else:
             self.answer_table.setItem(2, 2, QTableWidgetItem('Конечное'))
+
