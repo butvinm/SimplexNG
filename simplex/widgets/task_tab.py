@@ -1,11 +1,12 @@
 from typing import Optional
 
+import context
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (QAbstractItemView, QGridLayout, QHeaderView,
                                QLabel, QPushButton, QTableWidget,
                                QTableWidgetItem, QWidget)
-from utils.math import get_data_align, get_plot_points, get_max_solution, get_min_solution, get_task_data
-import context
+from utils.math import (get_data_align, get_max_solution, get_min_solution,
+                        get_plot_points, get_task_data)
 
 
 class BaseTable(QTableWidget):
@@ -116,6 +117,8 @@ class TaskTab(QWidget):
 
     def update_answer(self):
         context.input_data = self.task_data_table.get_data()
+        context.data_align = get_data_align(context.input_data)
+
         a_data, b_data = get_task_data(context.input_data)
 
         plot_points = get_plot_points(b_data)
@@ -127,10 +130,12 @@ class TaskTab(QWidget):
 
             self.view_answer(b_data, xs, f, endless)
 
+            context.answer_xs, context.answer_b_data, context.answer_f, context.answer_endless = xs, b_data, f, endless
+
     def view_answer(self, b_data: list[float], xs: list[float], f: float, endless: bool):
         self.answer_table.clear_data()
 
-        if get_data_align(context.input_data) == 'Vertical':
+        if context.data_align == 'Vertical':
             b_items = {
                 (3, 0): b_data[0],
                 (3, 1): b_data[1],
@@ -175,4 +180,3 @@ class TaskTab(QWidget):
             self.answer_table.setItem(2, 2, QTableWidgetItem('Бесконечное'))
         else:
             self.answer_table.setItem(2, 2, QTableWidgetItem('Конечное'))
-
