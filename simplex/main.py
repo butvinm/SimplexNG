@@ -1,12 +1,14 @@
 import sys
 
+import context
 import style
 from PySide2.QtGui import QGuiApplication, QIcon
 from PySide2.QtWidgets import (QAction, QApplication, QFileDialog, QGridLayout,
                                QMainWindow, QMessageBox, QTableWidgetItem,
                                QTabWidget, QWidget)
+from utils.excel import get_workbook, load_task_data, write_answer, write_task
 from utils.path import get_path
-from widgets import InfoWindow, TheoryWindow, MainWidget
+from widgets import InfoWindow, MainWidget, TheoryWindow
 from xlrd import open_workbook
 from xlwt import Font, Workbook, easyxf
 
@@ -25,19 +27,19 @@ class MainWindow(QMainWindow):
 
         Open_Task = QAction('Открыть задачу', self)
         Open_Task.setShortcut('Ctrl+O')
-        Open_Task.triggered.connect(self.OpenTask)
+        Open_Task.triggered.connect(self.open_task)
 
         Task_Save = QAction('Сохранить задачу', self)
         Task_Save.setShortcut('Ctrl+S')
-        Task_Save.triggered.connect(self.TaskSave)
+        Task_Save.triggered.connect(self.save_task)
 
         Answer_Save = QAction('Сохранить решение', self)
         Answer_Save.setShortcut('Ctrl+A')
-        Answer_Save.triggered.connect(self.AnswerSave)
+        Answer_Save.triggered.connect(self.save_answer)
 
         All_Save = QAction('Сохранить задачу и решение', self)
         All_Save.setShortcut('Ctrl+F')
-        All_Save.triggered.connect(self.AllSave)
+        All_Save.triggered.connect(self.save_all)
 
         Graph_Save = QAction('Сохранить график', self)
         Graph_Save.setShortcut('Ctrl+G')
@@ -89,126 +91,49 @@ class MainWindow(QMainWindow):
         self.setStyleSheet(f.style)
         self.showMaximized()
 
-    def OpenTask(self):
-        filename = QFileDialog.getOpenFileName(
-            self, "Выбирете файл", None, "*.xlsx, *.xls")
+    def open_task(self):
+        filename = QFileDialog.getOpenFileName(self, 'Выбирете файл', '.', '*.xlsx, *.xls')
         if filename == ('', ''):
             return
 
-        book = open_workbook(filename[0])
-        sheet = book.sheets()[0]
-        data = [[sheet.cell_value(r, c) for c in range(sheet.ncols)]
-                for r in range(sheet.nrows)]
+        data = load_task_data(filename[0])
+
+        task_data_table = self.main_widget.task_tab.task_data_table
+        task_data_table.clear_data()
 
         for i in range(len(data)):
             for j in range(len(data[i])):
-                try:
-                    data[i][j] = int(data[i][j])
-                except ValueError:
-                    continue
+                task_data_table.setItem(i, j, QTableWidgetItem(str(data[i][j])))
 
-        data = [list(map(str, i)) for i in data]
-
-        k = self.task_tab.my_table_1
-
-        k.setItem(0, 0, QTableWidgetItem(data[2][1]))
-        k.setItem(0, 1, QTableWidgetItem(data[2][2]))
-        k.setItem(0, 2, QTableWidgetItem(data[2][3]))
-        k.setItem(1, 0, QTableWidgetItem(data[3][1]))
-        k.setItem(1, 1, QTableWidgetItem(data[3][2]))
-        k.setItem(1, 2, QTableWidgetItem(data[3][3]))
-        k.setItem(2, 0, QTableWidgetItem(data[4][1]))
-        k.setItem(2, 1, QTableWidgetItem(data[4][2]))
-        k.setItem(2, 2, QTableWidgetItem(data[4][3]))
-
-        k.setItem(0, 3, QTableWidgetItem(data[2][4]))
-        k.setItem(1, 3, QTableWidgetItem(data[3][4]))
-        k.setItem(2, 3, QTableWidgetItem(data[4][4]))
-        k.setItem(3, 0, QTableWidgetItem(data[5][1]))
-        k.setItem(3, 1, QTableWidgetItem(data[5][2]))
-        k.setItem(3, 2, QTableWidgetItem(data[5][3]))
-
-    def TaskSave(self):
-        data = input_data(self.task_tab.my_table_1)
-
-        filename = QFileDialog.getSaveFileName(
-            None, 'Сохранение графика', 'Моя Задача.xls', '*.xls')
-        if filename == ('', ''):
+    def save_task(self):
+        filepath, _ = QFileDialog.getSaveFileName(None, 'Сохранение условия', 'Моя Задача.xls', '*.xls')
+        if not filepath:
             return
 
-        self.wb = Workbook()
+        wb = get_workbook()
+        write_task(wb, context.input_data)
+        wb.save(filepath)
 
-        self.task_sheet(data)
+    def save_answer(self):
+        filepath, _ = QFileDialog.getSaveFileName(None, 'Сохранение решения', 'Моя Задача.xls', '*.xls')
+        if not filepath:
+            return
 
-        try:
-            self.wb.save(filename[0])
-        except PermissionError:
-            mb = QMessageBox(QMessageBox.Critical,
-                             "Ошибка", "Закройте файл",
-                             buttons=QMessageBox.Ok,
-                             parent=self)
-            mb_view = mb.exec_()
+        wb = get_workbook()
+        write_answer(wb, context.data_align, context.answer_b_data,
+                     context.answer_xs, context.answer_f, context.answer_endless)
+        wb.save(filepath)
 
-    def AnswerSave(self):
-        data = input_data(self.task_tab.my_table_1)
+    def save_all(self):
+        filepath, _ = QFileDialog.getSaveFileName(None, 'Сохранение задачи', 'Моя Задача.xls', '*.xls')
+        if not filepath:
+            return
 
-        try:
-            ans = answer(data[0], data[1], find_points(data[1]))
-            filename = QFileDialog.getSaveFileName(
-                None, 'Сохранение графика', 'Мое Решение.xls', '*.xls')
-            if filename == ('', ''):
-                return
-
-            self.wb = Workbook()
-
-            self.answer_sheet(data, ans)
-
-            try:
-                self.wb.save(filename[0])
-            except PermissionError:
-                mb = QMessageBox(QMessageBox.Critical,
-                                 "Ошибка", "Закройте файл",
-                                 buttons=QMessageBox.Ok,
-                                 parent=self)
-                mb_view = mb.exec_()
-        except TypeError:
-            mb = QMessageBox(QMessageBox.Critical,
-                             "Ошибка", "Недостаточно данных",
-                             buttons=QMessageBox.Ok,
-                             parent=self)
-            mb_view = mb.exec_()
-
-    def AllSave(self):
-        data = input_data(self.task_tab.my_table_1)
-
-        try:
-            ans = answer(data[0], data[1], find_points(data[1]))
-
-            filename = QFileDialog.getSaveFileName(
-                None, 'Сохранение графика', 'Задача и Решение.xls', '*.xls')
-            if filename == ('', ''):
-                return
-
-            self.wb = Workbook()
-
-            self.task_sheet(data)
-            self.answer_sheet(data, ans)
-
-            try:
-                self.wb.save(filename[0])
-            except PermissionError:
-                mb = QMessageBox(QMessageBox.Critical,
-                                 "Ошибка", "Закройте файл",
-                                 buttons=QMessageBox.Ok,
-                                 parent=self)
-                mb_view = mb.exec_()
-
-        except TypeError:
-            mb = QMessageBox(QMessageBox.Critical,
-                             "Ошибка", "Недостаточно данных",
-                             buttons=QMessageBox.Ok,
-                             parent=self)
-            mb_view = mb.exec_()
+        wb = get_workbook()
+        write_task(wb, context.input_data)
+        write_answer(wb, context.data_align, context.answer_b_data,
+                     context.answer_xs, context.answer_f, context.answer_endless)
+        wb.save(filepath)
 
     def GraphSave(self):
         filename = QFileDialog.getSaveFileName(
@@ -221,7 +146,7 @@ class MainWindow(QMainWindow):
             self.graph_tab.graph.save(filename[0], 'PNG')
         except AttributeError:
             mb = QMessageBox(QMessageBox.Critical,
-                             "Ошибка", "Пустой график",
+                             'Ошибка', 'Пустой график',
                              buttons=QMessageBox.Ok,
                              parent=self)
             mb_view = mb.exec_()
@@ -233,7 +158,7 @@ class MainWindow(QMainWindow):
         self.info_window.show()
 
     def Task1(self):
-        k = self.task_tab.my_table_1
+        k = self.main_widget.task_tab.task_data_table
 
         k.setItem(0, 0, QTableWidgetItem('5'))
         k.setItem(0, 1, QTableWidgetItem('6'))
@@ -249,7 +174,7 @@ class MainWindow(QMainWindow):
         k.setItem(3, 2, QTableWidgetItem('15'))
 
     def Task2(self):
-        k = self.task_tab.my_table_1
+        k = self.main_widget.task_tab.task_data_table
 
         k.setItem(0, 0, QTableWidgetItem('0.7'))
         k.setItem(0, 1, QTableWidgetItem('0.9'))
@@ -270,7 +195,7 @@ class MainWindow(QMainWindow):
         font0.name = 'Arial'
         font0.colour_index = 0
 
-        style0 = easyxf("font: color black; align: horiz center")
+        style0 = easyxf('font: color black; align: horiz center')
 
         ws = self.wb.add_sheet('Задача', cell_overwrite_ok=True)
 
@@ -319,7 +244,7 @@ class MainWindow(QMainWindow):
         font0.name = 'Arial'
         font0.colour_index = 0
 
-        style0 = easyxf("font: color black; align: horiz center")
+        style0 = easyxf('font: color black; align: horiz center')
 
         ws = self.wb.add_sheet('Решение', cell_overwrite_ok=True)
 
@@ -418,7 +343,7 @@ class MainWindow(QMainWindow):
             ws.write(11, 3, 'Конечное')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication([])
     main_window = MainWindow()
     sys.exit(app.exec_())
