@@ -1,6 +1,6 @@
 * {
     font-family: "Arial", "Helvetica", "sans-serif";
-    font-size: 28px;
+    font-size: @font-size;
 }
 
 QMainWindow {
@@ -11,7 +11,7 @@ QMenuBar {
     background: #fefefe;
     border: 3px solid #808080;
     border-radius: 10px;
-    margin: 5px 5px 0;   
+    margin: 5px 5px 0;
 }
 
 QMenuBar::item {
@@ -45,18 +45,17 @@ QMenu::item {
 QMenu::item:selected {
     background-color: #e5e5e5;
     color: #000000;
-
 }
 
 QPushButton {
-    min-height: 42px;
+    min-height: @button-height;
     background: #fefefe;
     border: 2px solid #fefefe;
-    border-radius: 22px;
+    border-radius: @button-border-radius;
 }
 
 QPushButton:hover {
-    border: 3px solid #808080;   
+    border: 3px solid #808080;
 }
 
 QPushButton:pressed {
@@ -71,10 +70,10 @@ QTabWidget::pane {
 }
 
 QTabBar::tab {
-    min-width: 237px;
-    height: 40px;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    height: @tab-height;
+    min-width: 300px;
+    border-top-left-radius: @tab-border-radius;
+    border-top-right-radius: @tab-border-radius;
 }
 
 QTabBar::tab:selected {
@@ -101,21 +100,21 @@ QTableWidget {
 QTableWidget::item {
     background: #ffffff;
     border: 1px solid #808080;
-    border-radius: 20px;
+    border-radius: @tableitem-border-radius;
     margin: 5px;
-    padding: 10px;
+    padding: @padding;
 }
 
 QTableWidget::item:selected {
     background: rgba(0, 0, 0, 0);
     border: 3px solid #808080;
-    border-radius: 20px;
+    border-radius: @tableitem-border-radius;
 }
 
 QLineEdit {
     background: #ffffff;
     border: 3px solid #ffffff;
-    border-radius: 20px;
+    border-radius: @tableitem-border-radius;
 }
 
 QHeaderView {
@@ -129,18 +128,19 @@ QHeaderView::section {
 }
 
 QHeaderView::section:horizontal {
-    height: 50px;
+    height: @header-height;
 }
 
 QHeaderView::section:vertical {
-    width: 40px;
+    width: @header-width;
     padding-left: 14px;
 }
 
 QSlider::groove:vertical {
     background: red;
     position: absolute;
-    left: 4px; right: 4px;
+    left: 4px;
+    right: 4px;
 }
 
 QSlider::handle:vertical {
@@ -148,7 +148,7 @@ QSlider::handle:vertical {
     background: #fefefe;
     border: 2px solid #808080;
     border-radius: 10px;
-    margin: 0 -4px; /* expand outside the groove */
+    margin: 0 -4px;
 }
 
 QSlider::add-page:vertical {
@@ -160,13 +160,14 @@ QSlider::sub-page:vertical {
 }
 
 QCheckBox {
+    margin-left: 40px;
     spacing: 20px;
 }
 
-QCheckBox::indicator  {
-    width: 20px;
-    height: 20px;
-    border-radius: 11px;
+QCheckBox::indicator {
+    height: @checkbox-size;
+    width: @checkbox-size;
+    border-radius: @checkbox-border-radius;
 }
 
 QCheckBox::indicator:checked {
