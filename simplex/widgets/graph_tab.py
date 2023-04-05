@@ -52,6 +52,7 @@ class GraphTab(QWidget):
 
         self.paint_box = QFrame()
         self.paint_box.setFrameStyle(QFrame.Box)
+        self.graph = QImage(self.paint_box.size(), QImage.Format_ARGB32)
         layout.addWidget(self.paint_box, 0, 2, 0, 1)
 
         self.setLayout(layout)
@@ -72,28 +73,28 @@ class GraphTab(QWidget):
         xs_max, _, _ = get_max_solution(a_data, b_data, plot_points)
         max_point = (xs_max[0], xs_max[1])
 
-        graph = QImage(self.paint_box.size(), QImage.Format_ARGB32)
-        graph.fill(Qt.white)
+        self.graph = QImage(self.paint_box.size(), QImage.Format_ARGB32)
+        self.graph.fill(Qt.white)
 
         if self.marks_checkbox.isChecked():
-            self.draw_marks(graph)
+            self.draw_ticks(self.graph)
 
         if self.polygon_checkbox.isChecked():
-            self.draw_polygon(graph, list(plot_points.values()))
+            self.draw_polygon(self.graph, list(plot_points.values()))
 
-        self.draw_lines(graph, b_data)
+        self.draw_lines(self.graph, b_data)
 
         if self.vector_checkbox.isChecked():
-            self.draw_vector(graph, a_data)
+            self.draw_vector(self.graph, a_data)
 
         if self.points_checkbox.isChecked():
-            self.draw_points(graph, a_data, list(plot_points.values()), min_point, max_point)
+            self.draw_points(self.graph, a_data, list(plot_points.values()), min_point, max_point)
 
         p = QPainter(self)
-        p.drawImage(self.paint_box.pos(), graph)
+        p.drawImage(self.paint_box.pos(), self.graph)
         p.end()
 
-    def draw_marks(self, graph: QImage):
+    def draw_ticks(self, graph: QImage):
         width = self.paint_box.width()
         height = self.paint_box.height()
 

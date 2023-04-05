@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
 
         Graph_Save = QAction('Сохранить график', self)
         Graph_Save.setShortcut('Ctrl+G')
-        Graph_Save.triggered.connect(self.GraphSave)
+        Graph_Save.triggered.connect(self.save_graph)
 
         Programm_Exit = QAction('Выйти', self)
         Programm_Exit.setShortcut('Ctrl+C')
@@ -135,21 +135,12 @@ class MainWindow(QMainWindow):
                      context.answer_xs, context.answer_f, context.answer_endless)
         wb.save(filepath)
 
-    def GraphSave(self):
-        filename = QFileDialog.getSaveFileName(
-            None, 'Сохранение графика', 'График.png', '*.png ')
-
-        if filename == ('', ''):
+    def save_graph(self):
+        filepath, _ = QFileDialog.getSaveFileName(None, 'Сохранение графика', 'График.png', '*.png ')
+        if not filepath:
             return
-
-        try:
-            self.graph_tab.graph.save(filename[0], 'PNG')
-        except AttributeError:
-            mb = QMessageBox(QMessageBox.Critical,
-                             'Ошибка', 'Пустой график',
-                             buttons=QMessageBox.Ok,
-                             parent=self)
-            mb_view = mb.exec_()
+        
+        self.main_widget.graph_tab.graph.save(filepath)
 
     def open_theory(self):
         self.theory_window.showMaximized()
@@ -188,159 +179,6 @@ class MainWindow(QMainWindow):
         k.setItem(3, 0, QTableWidgetItem('5'))
         k.setItem(3, 1, QTableWidgetItem('2'))
         k.setItem(3, 2, QTableWidgetItem('1'))
-
-    def task_sheet(self, data):
-
-        font0 = Font()
-        font0.name = 'Arial'
-        font0.colour_index = 0
-
-        style0 = easyxf('font: color black; align: horiz center')
-
-        ws = self.wb.add_sheet('Задача', cell_overwrite_ok=True)
-
-        ws.write_merge(0, 0, 0, 4, 'Условие', style0)
-        ws.write(1, 1, 'A')
-        ws.write(1, 2, 'B')
-        ws.write(1, 3, 'C')
-        ws.write(1, 4, 'D')
-        ws.write(2, 0, 'I')
-        ws.write(3, 0, 'II')
-        ws.write(4, 0, 'III')
-        ws.write(5, 0, 'IV')
-
-        if data[2] == 0:
-            # 'a's
-            ws.write(2, 1, data[0][0])
-            ws.write(2, 2, data[0][1])
-            ws.write(2, 3, data[0][2])
-            ws.write(3, 1, data[0][3])
-            ws.write(3, 2, data[0][4])
-            ws.write(3, 3, data[0][5])
-            # 'b's
-            ws.write(2, 4, data[1][0])
-            ws.write(3, 4, data[1][1])
-            ws.write(5, 1, data[1][2])
-            ws.write(5, 2, data[1][3])
-            ws.write(5, 3, data[1][4])
-        else:
-            # 'a's
-            ws.write(4, 1, data[0][0])
-            ws.write(3, 1, data[0][1])
-            ws.write(2, 1, data[0][2])
-            ws.write(4, 2, data[0][3])
-            ws.write(3, 2, data[0][4])
-            ws.write(2, 2, data[0][5])
-            # 'b's
-            ws.write(5, 1, data[1][0])
-            ws.write(5, 2, data[1][1])
-            ws.write(4, 4, data[1][2])
-            ws.write(3, 4, data[1][3])
-            ws.write(2, 4, data[1][4])
-
-    def answer_sheet(self, data, ans):
-
-        font0 = Font()
-        font0.name = 'Arial'
-        font0.colour_index = 0
-
-        style0 = easyxf('font: color black; align: horiz center')
-
-        ws = self.wb.add_sheet('Решение', cell_overwrite_ok=True)
-
-        # Минимум
-        ws.write_merge(0, 0, 0, 4, 'Минимум', style0)
-        ws.write(1, 1, 'A')
-        ws.write(1, 2, 'B')
-        ws.write(1, 3, 'C')
-        ws.write(1, 4, 'D')
-        ws.write(2, 0, 'I')
-        ws.write(3, 0, 'II')
-        ws.write(4, 0, 'III')
-        ws.write(5, 0, 'IV')
-
-        if data[2] == 0:
-            # 'a's
-            ws.write(2, 1, ans[0][0])
-            ws.write(2, 2, ans[0][1])
-            ws.write(2, 3, ans[0][2])
-            ws.write(3, 1, ans[0][3])
-            ws.write(3, 2, ans[0][4])
-            ws.write(3, 3, ans[0][5])
-            # 'b's
-            ws.write(2, 4, data[1][0])
-            ws.write(3, 4, data[1][1])
-            ws.write(5, 1, data[1][2])
-            ws.write(5, 2, data[1][3])
-            ws.write(5, 3, data[1][4])
-        else:
-            # 'a's
-            ws.write(4, 1, ans[0][0])
-            ws.write(3, 1, ans[0][1])
-            ws.write(2, 1, ans[0][2])
-            ws.write(4, 2, ans[0][3])
-            ws.write(3, 2, ans[0][4])
-            ws.write(2, 2, ans[0][5])
-            # 'b's
-            ws.write(5, 1, data[1][0])
-            ws.write(5, 2, data[1][1])
-            ws.write(4, 4, data[1][2])
-            ws.write(3, 4, data[1][3])
-            ws.write(2, 4, data[1][4])
-
-        ws.write(5, 4, 'F= '+str(ans[1]))
-
-        if ans[2]:
-            ws.write(4, 3, 'Бесконечное')
-        else:
-            ws.write(4, 3, 'Конечное')
-
-        # Максимум
-        ws.write_merge(7, 7, 0, 4, 'Максимум', style0)
-        ws.write(8, 1, 'A')
-        ws.write(8, 2, 'B')
-        ws.write(8, 3, 'C')
-        ws.write(8, 4, 'D')
-        ws.write(9, 0, 'I')
-        ws.write(10, 0, 'II')
-        ws.write(11, 0, 'III')
-        ws.write(12, 0, 'IV')
-
-        if data[2] == 0:
-            # 'a's
-            ws.write(9, 1, ans[3][0])
-            ws.write(9, 2, ans[3][1])
-            ws.write(9, 3, ans[3][2])
-            ws.write(10, 1, ans[3][3])
-            ws.write(10, 2, ans[3][4])
-            ws.write(10, 3, ans[3][5])
-            # 'b's
-            ws.write(9, 4, data[1][0])
-            ws.write(10, 4, data[1][1])
-            ws.write(12, 1, data[1][2])
-            ws.write(12, 2, data[1][3])
-            ws.write(12, 3, data[1][4])
-        else:
-            # 'a's
-            ws.write(11, 1, ans[3][0])
-            ws.write(10, 1, ans[3][1])
-            ws.write(9, 1, ans[3][2])
-            ws.write(11, 2, ans[3][3])
-            ws.write(10, 2, ans[3][4])
-            ws.write(9, 2, ans[3][5])
-            # 'b's
-            ws.write(12, 1, data[1][0])
-            ws.write(12, 2, data[1][1])
-            ws.write(10, 4, data[1][2])
-            ws.write(9, 4, data[1][3])
-            ws.write(8, 4, data[1][4])
-
-        ws.write(12, 4, 'F= '+str(ans[4]))
-
-        if ans[5]:
-            ws.write(11, 3, 'Бесконечное')
-        else:
-            ws.write(11, 3, 'Конечное')
 
 
 if __name__ == '__main__':
