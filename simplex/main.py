@@ -6,7 +6,7 @@ from PySide2.QtGui import QGuiApplication, QIcon
 from PySide2.QtWidgets import (QAction, QApplication, QFileDialog, QGridLayout,
                                QMainWindow, QMessageBox, QTableWidgetItem,
                                QTabWidget, QWidget)
-from utils.excel import get_workbook, load_task_data, write_answer, write_task
+from utils.excel import get_workbook, load_task, write_answer, write_task
 from utils.path import get_path
 from widgets import InfoWindow, MainWidget, TheoryWindow
 from xlrd import open_workbook
@@ -92,11 +92,11 @@ class MainWindow(QMainWindow):
         self.showMaximized()
 
     def open_task(self):
-        filename = QFileDialog.getOpenFileName(self, 'Выбирете файл', '.', '*.xlsx, *.xls')
-        if filename == ('', ''):
+        filepath, _ = QFileDialog.getOpenFileName(None, 'Загрузить задачу', '.', '*.xls')
+        if not filepath:
             return
 
-        data = load_task_data(filename[0])
+        data = load_task(filepath)
 
         task_data_table = self.main_widget.task_tab.task_data_table
         task_data_table.clear_data()

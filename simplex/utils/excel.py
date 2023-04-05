@@ -10,15 +10,15 @@ def get_workbook() -> Workbook:
     return Workbook()
 
 
-def load_task_data(file: str) -> list[list[str]]:
+def load_task(file: str) -> list[list[str]]:
     book: Book = open_workbook(file)
     sheet: Sheet = book.sheet_by_name('Условие')
 
     data: list[list[str]] = [
         [
-            sheet.cell_value(r, c) for c in range(sheet.ncols)
+            sheet.cell_value(r, c) for c in range(1, sheet.ncols)
         ]
-        for r in range(sheet.nrows)
+        for r in range(1, sheet.nrows)
     ]
 
     return data
