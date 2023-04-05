@@ -45,10 +45,10 @@ class GraphTab(QWidget):
         self.points_checkbox.toggle()
         layout.addWidget(self.points_checkbox, 2, 0)
 
-        self.marks_checkbox = QCheckBox('Разметка', self)
-        self.marks_checkbox.stateChanged.connect(self.update)  # type: ignore
-        self.marks_checkbox.toggle()
-        layout.addWidget(self.marks_checkbox, 3, 0)
+        self.ticks_checkbox = QCheckBox('Разметка', self)
+        self.ticks_checkbox.stateChanged.connect(self.update)  # type: ignore
+        self.ticks_checkbox.toggle()
+        layout.addWidget(self.ticks_checkbox, 3, 0)
 
         self.paint_box = QFrame()
         self.paint_box.setFrameStyle(QFrame.Box)
@@ -76,57 +76,58 @@ class GraphTab(QWidget):
         self.graph = QImage(self.paint_box.size(), QImage.Format_ARGB32)
         self.graph.fill(Qt.white)
 
-        if self.marks_checkbox.isChecked():
-            self.draw_ticks(self.graph)
+        OFFSET = 100 
+
+        if self.ticks_checkbox.isChecked():
+            self.draw_ticks(OFFSET, self.graph)
 
         if self.polygon_checkbox.isChecked():
-            self.draw_polygon(self.graph, list(plot_points.values()))
+            self.draw_polygon(OFFSET, self.graph, list(plot_points.values()))
 
-        self.draw_lines(self.graph, b_data)
+        self.draw_lines(OFFSET, self.graph, b_data)
 
         if self.vector_checkbox.isChecked():
-            self.draw_vector(self.graph, a_data)
+            self.draw_vector(OFFSET, self.graph, a_data)
 
         if self.points_checkbox.isChecked():
-            self.draw_points(self.graph, a_data, list(plot_points.values()), min_point, max_point)
+            self.draw_points(OFFSET, self.graph, a_data, list(plot_points.values()), min_point, max_point)
+
+        self.draw_labels(OFFSET, self.graph, b_data)
 
         p = QPainter(self)
         p.drawImage(self.paint_box.pos(), self.graph)
         p.end()
 
-    def draw_ticks(self, graph: QImage):
+    def draw_ticks(self, offset: float, graph: QImage):
         width = self.paint_box.width()
         height = self.paint_box.height()
 
-        k = 150 // self.graph_scale
-
         qp = QPainter(graph)
-        qp.setPen(QPen(Qt.lightGray, self.graph_scale // 40 + 1))
+        qp.setPen(QPen(Qt.lightGray, self.graph_scale / 40 + 1))
 
         for i in range(0, width, self.graph_scale):
-            qp.drawLine(i, 0, i, height)
+            qp.drawLine(i + offset, 0, i + offset, height)
 
         for i in range(0, height, self.graph_scale):
-            qp.drawLine(0, height-i, width, height-i)
+            qp.drawLine(0, height - i - offset, width, height - i - offset)
 
         qp.setPen(QPen(Qt.black, 3))
         qp.drawLine(
-            k * self.graph_scale, 0,
-            k * self.graph_scale, height
+            offset, 0,
+            offset, height
         )
         qp.drawLine(
-            0, height - k * self.graph_scale,
-            width, height - k * self.graph_scale
+            0, height - offset,
+            width, height - offset
         )
         qp.end()
 
-    def draw_lines(self, graph: QImage, b_data: list[float]):
+    def draw_lines(self, offset: float, graph: QImage, b_data: list[float]):
         width = self.paint_box.width()
         height = self.paint_box.height()
 
-        k = 150 // self.graph_scale
-        x_0 = k * self.graph_scale
-        y_0 = height - k * self.graph_scale
+        x_0 = offset
+        y_0 = height - offset
 
         qp = QPainter(graph)
 
@@ -137,39 +138,70 @@ class GraphTab(QWidget):
         qp.drawLine(x_0, y_0, width, y_0)
         # L3
         qp.drawLine(
-            round(x_0 + b_data[2] * self.graph_scale), y_0,
-            round(x_0 + b_data[2] * self.graph_scale), 0
+            x_0 + b_data[2] * self.graph_scale, y_0,
+            x_0 + b_data[2] * self.graph_scale, 0
         )
         # L4
         qp.drawLine(
-            x_0, round(y_0 - b_data[3] * self.graph_scale),
-            width, round(y_0 - b_data[3] * self.graph_scale)
+            x_0, y_0 - b_data[3] * self.graph_scale,
+            width, y_0 - b_data[3] * self.graph_scale
         )
         # L5
         qp.drawLine(
-            round(x_0 + b_data[0] * self.graph_scale), y_0,
-            x_0, round(y_0 - b_data[0] * self.graph_scale)
+            x_0 + b_data[0] * self.graph_scale, y_0,
+            x_0, y_0 - b_data[0] * self.graph_scale
         )
         # L6
         qp.drawLine(
-            round(x_0 + abs(b_data[0] - b_data[4]) * self.graph_scale), y_0,
-            x_0, round(y_0 - abs(b_data[0] - b_data[4]) * self.graph_scale)
+            x_0 + abs(b_data[0] - b_data[4]) * self.graph_scale, y_0,
+            x_0, y_0 - abs(b_data[0] - b_data[4]) * self.graph_scale
         )
+
+        qp.end()
+
+    def draw_labels(self, offset: float, graph: QImage, b_data: list[float]):
+        width = self.paint_box.width()
+        height = self.paint_box.height()
+ 
+        x_0 = offset
+        y_0 = height - offset
+        X_OFFSET = 70
+        Y_OFFSET = 30
+
+        qp = QPainter(graph)
+        qp.setPen(QPen(Qt.black, 3))
+        qp.setFont(QFont('Times', 10))
+
         # Numbers
         qp.setPen(QPen(Qt.red, 2))
         qp.setFont(QFont('Times', 10))
 
-        qp.drawText(x_0 - 20, y_0 + 25, '0')
-        qp.drawText(round(x_0 + b_data[2] * self.graph_scale - 10), y_0 + 25, str(b_data[2]))
-        qp.drawText(x_0 - 30, round(y_0 - b_data[3] * self.graph_scale + 10), str(b_data[3]))
-        qp.drawText(round(x_0 + b_data[0] * self.graph_scale - 10), y_0 + 25, str(b_data[0]))
-        qp.drawText(x_0 - 30, round(y_0 - abs(b_data[0] - b_data[4])
-                    * self.graph_scale + 10), str(abs(b_data[0] - b_data[4])))
+        qp.drawText(
+            x_0 - 20, y_0 + 25, 
+            '0'
+        )
+        qp.drawText(
+            x_0 + b_data[2] * self.graph_scale - X_OFFSET, y_0 + Y_OFFSET, 
+            str(b_data[2])
+        )
+        qp.drawText(
+            x_0 - X_OFFSET, y_0 - b_data[3] * self.graph_scale + Y_OFFSET, 
+            str(b_data[3])
+        )
+        qp.drawText(
+            x_0 + b_data[0] * self.graph_scale - X_OFFSET, y_0 + Y_OFFSET, 
+            str(b_data[0])
+        )
+        qp.drawText(
+            x_0 - X_OFFSET, y_0 - abs(b_data[0] - b_data[4]) * self.graph_scale + Y_OFFSET, 
+            str(abs(b_data[0] - b_data[4]))
+        )
 
         qp.end()
 
     def draw_points(
         self,
+        offset: float,
         graph: QImage,
         a_data: list[float],
         points: list[tuple[float, float]],
@@ -178,9 +210,8 @@ class GraphTab(QWidget):
     ):
         height = self.paint_box.height()
 
-        k = 150 // self.graph_scale
-        x_0 = k * self.graph_scale
-        y_0 = height - k * self.graph_scale
+        x_0 = offset
+        y_0 = height - offset
 
         x_1 = a_data[0] - a_data[2] - a_data[3] + a_data[5]
         x_2 = a_data[1] - a_data[2] - a_data[4] + a_data[5]
@@ -190,37 +221,36 @@ class GraphTab(QWidget):
             if point == min_point or point == max_point:
                 qp.setPen(QPen(Qt.red, 3))
                 qp.drawLine(
-                    round(k * self.graph_scale + x_2 * self.graph_scale + point[0] * self.graph_scale),
-                    round(height - k * self.graph_scale + x_1 * self.graph_scale - point[1] * self.graph_scale),
-                    round(k * self.graph_scale - x_2 * self.graph_scale + point[0] * self.graph_scale),
-                    round(height - k * self.graph_scale - x_1 * self.graph_scale - point[1] * self.graph_scale)
+                    offset + x_2 * self.graph_scale + point[0] * self.graph_scale,
+                    height - offset + x_1 * self.graph_scale - point[1] * self.graph_scale,
+                    offset - x_2 * self.graph_scale + point[0] * self.graph_scale,
+                    height - offset - x_1 * self.graph_scale - point[1] * self.graph_scale
                 )
             else:
                 qp.setPen(QPen(Qt.black, 3))
 
             qp.setBrush(QBrush(Qt.white))
             qp.drawEllipse(
-                round(x_0 + point[0] * self.graph_scale - 7), round(y_0 - point[1] * self.graph_scale - 7),
+                x_0 + point[0] * self.graph_scale - 7, y_0 - point[1] * self.graph_scale - 7,
                 14, 14
             )
         qp.end()
 
-    def draw_polygon(self, graph: QImage, points: list[tuple[float, float]]):
+    def draw_polygon(self, offset: float, graph: QImage, points: list[tuple[float, float]]):
         height = self.paint_box.height()
 
         centroid = tuple(map(lambda l: sum(l) / len(l), zip(*points)))
         points_with_angles = [(point, atan2(point[1]-centroid[1], point[0]-centroid[0])) for point in points]
         sorted_points = [point[0] for point in sorted(points_with_angles, key=lambda point: point[1])]
 
-        k = 150 // self.graph_scale
-        x_0 = k * self.graph_scale
-        y_0 = height - k * self.graph_scale
+        x_0 = offset
+        y_0 = height - offset
 
         polygon = QPolygon(
             [
                 QPoint(
-                    round(x_0 + (i[0] * self.graph_scale)),
-                    round(y_0 - (i[1] * self.graph_scale))
+                    x_0 + (i[0] * self.graph_scale),
+                    y_0 - (i[1] * self.graph_scale)
                 ) for i in sorted_points
             ]
         )
@@ -230,23 +260,23 @@ class GraphTab(QWidget):
         qp.drawPolygon(polygon)  # type: ignore
         qp.end()
 
-    def draw_vector(self, graph: QImage, a_data: list[float]):
+    def draw_vector(self, offset: float, graph: QImage, a_data: list[float]):
         height = self.paint_box.height()
 
-        k = 150 // self.graph_scale
+        
         x_1 = a_data[0]-a_data[2]-a_data[3]+a_data[5]
         x_2 = a_data[1]-a_data[2]-a_data[4]+a_data[5]
 
         qp = QPainter(graph)
         qp.setPen(QPen(Qt.red, 3))
         qp.drawLine(
-            round(k * self.graph_scale),
-            round(height - k * self.graph_scale),
-            round(k * self.graph_scale + x_1 * self.graph_scale * 5),
-            round(height - k * self.graph_scale - x_2 * self.graph_scale * 5)
+            offset,
+            height - offset,
+            offset + x_1 * self.graph_scale * 5,
+            height - offset - x_2 * self.graph_scale * 5
         )
         qp.drawLine(
-            round(k * self.graph_scale+x_2*5), round(height-k * self.graph_scale+x_1*5),
-            round(k * self.graph_scale-x_2*5), round(height-k * self.graph_scale-x_1*5)
+            offset+x_2*5, height-offset+x_1*5,
+            offset-x_2*5, height-offset-x_1*5
         )
         qp.end()
