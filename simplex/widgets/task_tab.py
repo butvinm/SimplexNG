@@ -14,10 +14,12 @@ class BaseTable(QTableWidget):
     def __init__(self, rows: int, columns: int, parent: QWidget):
         super().__init__(rows, columns, parent)
 
+        # Set the resize mode for the vertical header
         vertical_header = QHeaderView(Qt.Vertical, self)
         vertical_header.setSectionResizeMode(QHeaderView.Stretch)
-        self.setHorizontalHeader(vertical_header)
+        self.setVerticalHeader(vertical_header)
 
+        # Set the resize mode for the horizontal header
         horizontal_header = QHeaderView(Qt.Horizontal, self)
         horizontal_header.setSectionResizeMode(QHeaderView.Stretch)
         self.setHorizontalHeader(horizontal_header)
