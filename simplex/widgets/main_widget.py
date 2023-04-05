@@ -1,4 +1,5 @@
 from PySide2.QtWidgets import QGridLayout, QTabWidget, QWidget
+
 from widgets.graph_tab import GraphTab
 from widgets.task_tab import TaskTab
 

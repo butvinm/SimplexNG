@@ -1,10 +1,11 @@
 from typing import Optional
 
-import context
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (QAbstractItemView, QGridLayout, QHeaderView,
                                QLabel, QPushButton, QTableWidget,
                                QTableWidgetItem, QWidget)
+
+import context
 from utils.math import (get_data_align, get_max_solution, get_min_solution,
                         get_plot_points, get_task_data)
 

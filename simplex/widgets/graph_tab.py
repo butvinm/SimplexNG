@@ -1,10 +1,11 @@
 from math import atan2
 
-import context
 from PySide2.QtCore import QPoint, Qt
 from PySide2.QtGui import (QBrush, QFont, QImage, QPainter, QPaintEvent, QPen,
                            QPolygon)
 from PySide2.QtWidgets import QCheckBox, QFrame, QGridLayout, QSlider, QWidget
+
+import context
 from utils.math import (get_max_solution, get_min_solution, get_plot_points,
                         get_task_data)
 
@@ -76,7 +77,7 @@ class GraphTab(QWidget):
         self.graph = QImage(self.paint_box.size(), QImage.Format_ARGB32)
         self.graph.fill(Qt.white)
 
-        OFFSET = 100 
+        OFFSET = 100
 
         if self.ticks_checkbox.isChecked():
             self.draw_ticks(OFFSET, self.graph)
@@ -162,7 +163,7 @@ class GraphTab(QWidget):
     def draw_labels(self, offset: float, graph: QImage, b_data: list[float]):
         width = self.paint_box.width()
         height = self.paint_box.height()
- 
+
         x_0 = offset
         y_0 = height - offset
         X_OFFSET = 70
@@ -177,23 +178,23 @@ class GraphTab(QWidget):
         qp.setFont(QFont('Times', 10))
 
         qp.drawText(
-            x_0 - 20, y_0 + 25, 
+            x_0 - 20, y_0 + 25,
             '0'
         )
         qp.drawText(
-            x_0 + b_data[2] * self.graph_scale - X_OFFSET, y_0 + Y_OFFSET, 
+            x_0 + b_data[2] * self.graph_scale - X_OFFSET, y_0 + Y_OFFSET,
             str(b_data[2])
         )
         qp.drawText(
-            x_0 - X_OFFSET, y_0 - b_data[3] * self.graph_scale + Y_OFFSET, 
+            x_0 - X_OFFSET, y_0 - b_data[3] * self.graph_scale + Y_OFFSET,
             str(b_data[3])
         )
         qp.drawText(
-            x_0 + b_data[0] * self.graph_scale - X_OFFSET, y_0 + Y_OFFSET, 
+            x_0 + b_data[0] * self.graph_scale - X_OFFSET, y_0 + Y_OFFSET,
             str(b_data[0])
         )
         qp.drawText(
-            x_0 - X_OFFSET, y_0 - abs(b_data[0] - b_data[4]) * self.graph_scale + Y_OFFSET, 
+            x_0 - X_OFFSET, y_0 - abs(b_data[0] - b_data[4]) * self.graph_scale + Y_OFFSET,
             str(abs(b_data[0] - b_data[4]))
         )
 
@@ -263,7 +264,6 @@ class GraphTab(QWidget):
     def draw_vector(self, offset: float, graph: QImage, a_data: list[float]):
         height = self.paint_box.height()
 
-        
         x_1 = a_data[0]-a_data[2]-a_data[3]+a_data[5]
         x_2 = a_data[1]-a_data[2]-a_data[4]+a_data[5]
 

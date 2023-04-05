@@ -1,16 +1,17 @@
 import sys
 
-import context
-import style
 from PySide2.QtGui import QGuiApplication, QIcon
 from PySide2.QtWidgets import (QAction, QApplication, QFileDialog, QGridLayout,
                                QMainWindow, QMessageBox, QTableWidgetItem,
                                QTabWidget, QWidget)
+from xlrd import open_workbook
+from xlwt import Font, Workbook, easyxf
+
+import context
+import style
 from utils.excel import get_workbook, load_task, write_answer, write_task
 from utils.path import get_path
 from widgets import InfoWindow, MainWidget, TheoryWindow
-from xlrd import open_workbook
-from xlwt import Font, Workbook, easyxf
 
 
 class MainWindow(QMainWindow):
@@ -139,7 +140,7 @@ class MainWindow(QMainWindow):
         filepath, _ = QFileDialog.getSaveFileName(None, 'Сохранение графика', 'График.png', '*.png ')
         if not filepath:
             return
-        
+
         self.main_widget.graph_tab.graph.save(filepath)
 
     def open_theory(self):

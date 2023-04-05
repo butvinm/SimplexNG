@@ -1,5 +1,6 @@
 from PySide2.QtGui import QFont, QIcon
 from PySide2.QtWidgets import QFrame, QGridLayout, QTextEdit, QWidget
+
 from utils.path import get_path
 
 
