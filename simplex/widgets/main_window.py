@@ -1,8 +1,7 @@
-from PySide2.QtGui import QIcon, QKeySequence, QGuiApplication
+import context
+from PySide2.QtGui import QGuiApplication, QIcon, QKeySequence
 from PySide2.QtWidgets import (QAction, QFileDialog, QMainWindow,
                                QTableWidgetItem)
-
-import context
 from utils.excel import get_workbook, load_task, write_answer, write_task
 from utils.path import get_path
 from utils.style import get_adjusted_style
@@ -22,7 +21,7 @@ class MainWindow(QMainWindow):
 
         self.setMinimumSize(500, 900)
         self.setWindowTitle('Simplex')
-        self.setWindowIcon(QIcon(get_path('assets/App.ico')))
+        self.setWindowIcon(QIcon(get_path('assets/icon.ico')))
 
         height = QGuiApplication.primaryScreen().geometry().height()
         self.setStyleSheet(get_adjusted_style(height))

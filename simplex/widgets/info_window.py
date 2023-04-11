@@ -1,6 +1,5 @@
 from PySide2.QtGui import QFont, QIcon, QPixmap
 from PySide2.QtWidgets import QGridLayout, QLabel, QWidget
-
 from utils.path import get_path
 
 
@@ -10,7 +9,7 @@ class InfoWindow(QWidget):
         self.setFont(QFont('Arial', 12))
         self.setMaximumSize(640, 480)
         self.setWindowTitle('Формат таблицы для открытия')
-        self.setWindowIcon(QIcon(get_path('assets/App.ico')))
+        self.setWindowIcon(QIcon(get_path('assets/icon.ico')))
 
         self.init_widgets()
 

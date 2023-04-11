@@ -1,6 +1,5 @@
 from PySide2.QtGui import QFont, QIcon
 from PySide2.QtWidgets import QFrame, QGridLayout, QTextEdit, QWidget
-
 from utils.path import get_path
 
 
@@ -8,7 +7,7 @@ class TheoryWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setFont(QFont('Arial', 12))
-        self.setWindowIcon(QIcon(get_path('assets/App.ico')))
+        self.setWindowIcon(QIcon(get_path('assets/icon.ico')))
         self.setWindowTitle('Теория')
         self.init_widgets()
 
