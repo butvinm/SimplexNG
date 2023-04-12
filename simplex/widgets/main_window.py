@@ -75,11 +75,11 @@ class MainWindow(QMainWindow):
         tasks_menu = self.menuBar().addMenu('Задачи')
 
         task_1_action = QAction('Задача №1', self)
-        task_1_action.triggered.connect(self.Task1)  # type: ignore
+        task_1_action.triggered.connect(self.open_task_1)  # type: ignore
         tasks_menu.addAction(task_1_action)
 
         task_2_action = QAction('Задача №2', self)
-        task_2_action.triggered.connect(self.Task2)  # type: ignore
+        task_2_action.triggered.connect(self.open_task_2)  # type: ignore
         tasks_menu.addAction(task_2_action)
 
     def init_widgets(self):
@@ -87,6 +87,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.main_widget)
 
     def open_task(self):
+        """
+        Opens a file dialog to select a task file, loads the data from the selected file
+        and displays it in the task data table of the main widget.
+        """
         filepath, _ = QFileDialog.getOpenFileName(None, 'Загрузить задачу', '.', '*.xls')
         if not filepath:
             return
@@ -101,6 +105,10 @@ class MainWindow(QMainWindow):
                 task_data_table.setItem(i, j, QTableWidgetItem(str(data[i][j])))
 
     def save_task(self):
+        """
+        Opens a file dialog to select a file for saving the task, creates a workbook,
+        writes the input data to it, and saves the workbook to the selected file.
+        """
         filepath, _ = QFileDialog.getSaveFileName(None, 'Сохранение условия', 'Моя Задача.xls', '*.xls')
         if not filepath:
             return
@@ -110,6 +118,10 @@ class MainWindow(QMainWindow):
         wb.save(filepath)
 
     def save_answer(self):
+        """
+        Opens a file dialog to select a file for saving the answer, creates a workbook,
+        writes the answer data to it, and saves the workbook to the selected file.
+        """
         filepath, _ = QFileDialog.getSaveFileName(None, 'Сохранение решения', 'Моя Задача.xls', '*.xls')
         if not filepath:
             return
@@ -120,6 +132,10 @@ class MainWindow(QMainWindow):
         wb.save(filepath)
 
     def save_all(self):
+        """
+        Opens a file dialog to select a file for saving the task, creates a workbook,
+        writes both input data and answer data to it, and saves the workbook to the selected file.
+        """
         filepath, _ = QFileDialog.getSaveFileName(None, 'Сохранение задачи', 'Моя Задача.xls', '*.xls')
         if not filepath:
             return
@@ -131,6 +147,9 @@ class MainWindow(QMainWindow):
         wb.save(filepath)
 
     def save_graph(self):
+        """
+        Opens a file dialog to select a file for saving the graph, and saves the graph image to the selected file.
+        """
         filepath, _ = QFileDialog.getSaveFileName(None, 'Сохранение графика', 'График.png', '*.png ')
         if not filepath:
             return
@@ -138,12 +157,21 @@ class MainWindow(QMainWindow):
         self.main_widget.graph_tab.graph.save(filepath)
 
     def open_theory(self):
+        """
+        Shows the theory window maximized.
+        """
         self.theory_window.showMaximized()
 
     def open_info(self):
+        """
+        Shows the information window.
+        """
         self.info_window.show()
 
-    def Task1(self):
+    def open_task_1(self):
+        """
+        Set data of example task 1 to table
+        """
         k = self.main_widget.task_tab.task_data_table
 
         k.setItem(0, 0, QTableWidgetItem('5'))
@@ -159,7 +187,11 @@ class MainWindow(QMainWindow):
         k.setItem(3, 1, QTableWidgetItem('35'))
         k.setItem(3, 2, QTableWidgetItem('15'))
 
-    def Task2(self):
+    def open_task_2(self):
+        """
+        Set data of example task 1 to table
+        """
+
         k = self.main_widget.task_tab.task_data_table
 
         k.setItem(0, 0, QTableWidgetItem('0.7'))

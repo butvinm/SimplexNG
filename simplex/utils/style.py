@@ -2,6 +2,17 @@ from utils.path import get_path
 
 
 def get_adjusted_style(window_height: float) -> str:
+    """The get_adjusted_style function takes a window_height argument, which is a float representing the height of a window. 
+    The function adjusts a style sheet by replacing certain values with values calculated based on the window_height argument. 
+    The adjusted style sheet is returned as a string.
+
+    Args:
+        window_height (float): A float representing the height of a window.
+
+    Returns:
+        str: The adjusted style sheet as a string.
+    """
+
     replacement = {
         '@padding': f'{round(window_height / 200)}px',
         '@font-size': f'{round(window_height / 38.5)}px',

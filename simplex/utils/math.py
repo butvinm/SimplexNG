@@ -2,18 +2,42 @@ from math import atan, degrees
 from typing import Optional
 
 
-def get_data_align(data: list[list[Optional[float]]]) -> str:
-    """Get data alignment depends on data"""
+from typing import Optional, List, Tuple
 
+
+def get_data_align(data: List[List[Optional[float]]]) -> str:
+    """Determine the alignment of the input data table.
+
+    Args:
+        data (List[List[Optional[float]]]): A 2D list of float values.
+
+    Returns:
+        str: The alignment of the table. Either 'Horizontal' or 'Vertical'.
+    """
+
+    # Check if the second row of the table contains any non-None values.
+    # If it does, then the table is aligned horizontally, otherwise vertically.
     align = 'Horizontal' if data[1][2] is not None else 'Vertical'
 
     return align
 
 
-def get_task_data(data: list[list[Optional[float]]]) -> tuple[list[float], list[float]]:
-    """Get task data from table depends on data alignment and return A's and B's values"""
+def get_task_data(data: List[List[Optional[float]]]) -> Tuple[List[float], List[float]]:
+    """Extract the task data (A and B values) from the input data table.
 
-    if get_data_align(data) == 'Horizontal':
+    Args:
+        data (List[List[Optional[float]]]): A 2D list of float values.
+
+    Returns:
+        Tuple[List[float], List[float]]: A tuple of two 1D lists.
+            The first list contains the A values, and the second list contains the B values.
+    """
+
+    # Determine the alignment of the input data table.
+    align = get_data_align(data)
+
+    # Extract the A and B values from the input data table based on the alignment.
+    if align == 'Horizontal':
         a_data = [
             data[0][0], data[0][1], data[0][2],
             data[1][0], data[1][1], data[1][2]
@@ -27,20 +51,38 @@ def get_task_data(data: list[list[Optional[float]]]) -> tuple[list[float], list[
             data[2][0], data[1][0], data[0][0],
             data[2][1], data[1][1], data[0][1]
         ]
-
         b_data = [
             data[3][0], data[3][1],
             data[2][3], data[1][3], data[0][3]
         ]
 
+    # Check if any item in the A or B data lists is None.
+    # If any item is None, then raise a ValueError.
     if any(value is None for value in a_data + b_data):
         raise ValueError('Incorrect input data: empty items')
 
+    # Return the A and B data lists as a tuple.
     return a_data, b_data  # pyright: reportGeneralTypeIssues=none
 
 
 def get_plot_points(b_data: list[float]) -> dict[int, tuple[float, float]]:
-    """Some weird math stuff that find points for plot"""
+    """Some weird math stuff that find points for plot.
+
+    The function takes a list of five float values as input, representing the constrains for a simplex optimization problem. 
+    The function uses a series of 12 mathematical formulas to determine the points on the graph that are relevant for the given optimization problem. 
+    Each formula checks for a specific condition that must be met for a point to be included in the dictionary of plot points. 
+    The formulas are numbered from 1 to 12 in the code, and each formula corresponds to a specific pair of vertices on the simplex.
+
+    Args:
+        b_data: A list of five float values representing the data for a simplex optimization problem.
+
+    Returns:
+        A dictionary with integer keys and tuple values, where each key represents a point on a graph and the value is a tuple containing its x and y coordinates.
+
+    Raises:
+        ValueError: If any of the first three values in the input list are negative.
+
+    """
 
     points: dict[int, tuple[float, float]] = {}
     if b_data[0] < 0 or b_data[2] < 0 or b_data[3] < 0:
@@ -128,7 +170,25 @@ def get_min_solution(
     b_data: list[float],
     points: dict[int, tuple[float, float]]
 ) -> tuple[list[float], float, bool]:
-    """Some other weird math stuff that calculation minimum solution"""
+    """ Given input data describing a linear programming problem in standard form, this function returns the minimum solution
+    using the simplex method. The input data consists of:
+    - a_data: a list of coefficients for the objective function
+    - b_data: a list of constraints (i.e., the right-hand side of the equations)
+    - points: a dictionary mapping variable indices to (x, y) coordinates for plotting purposes
+
+    The simplex method involves iteratively improving a basic feasible solution until an optimal solution is reached.
+    To apply the simplex method, we first convert the problem into standard form by introducing slack variables.
+    The resulting tableau is then iteratively pivoted until the optimal solution is found.
+
+    The function returns a tuple containing:
+    - xs_min: a list of the optimal values of the decision variables
+    - f_min: the minimum value of the objective function
+    - min_endless: a boolean indicating whether the solution is unbounded
+
+    Note that the function assumes that the problem is feasible and bounded. If the problem is infeasible or unbounded,
+    the function may raise an exception or return incorrect results.
+    """
+
     try:
         alfa = round(degrees(atan((a_data[1]-a_data[2]-a_data[4]+a_data[5])/(a_data[0]-a_data[2]-a_data[3]+a_data[5]))))
         alfa = 90 - alfa
@@ -178,7 +238,25 @@ def get_max_solution(
     b_data: list[float],
     points: dict[int, tuple[float, float]]
 ) -> tuple[list[float], float, bool]:
-    """Some other weird math stuff that calculation maximum solution"""
+    """ Given input data describing a linear programming problem in standard form, this function returns the maximum solution
+    using the simplex method. The input data consists of:
+    - a_data: a list of coefficients for the objective function
+    - b_data: a list of constraints (i.e., the right-hand side of the equations)
+    - points: a dictionary mapping variable indices to (x, y) coordinates for plotting purposes
+
+    The simplex method involves iteratively improving a basic feasible solution until an optimal solution is reached.
+    To apply the simplex method, we first convert the problem into standard form by introducing slack variables.
+    The resulting tableau is then iteratively pivoted until the optimal solution is found.
+
+    The function returns a tuple containing:
+    - xs_max: a list of the optimal values of the decision variables
+    - f_max: the maximum value of the objective function
+    - max_endless: a boolean indicating whether the solution is unbounded
+
+    Note that the function assumes that the problem is feasible and bounded. If the problem is infeasible or unbounded,
+    the function may raise an exception or return incorrect results.
+    """
+
     try:
         alfa = round(degrees(atan((a_data[1]-a_data[2]-a_data[4]+a_data[5])/(a_data[0]-a_data[2]-a_data[3]+a_data[5]))))
         alfa = 90 - alfa

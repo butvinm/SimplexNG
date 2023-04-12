@@ -59,10 +59,16 @@ class GraphTab(QWidget):
         self.setLayout(layout)
 
     def on_slider_change(self, value: int):
+        """
+        Change graph on slider change
+        """
         self.graph_scale = value
         self.update()
 
     def paintEvent(self, event: QPaintEvent):
+        """
+        Get data from context, calculate solution and draw graph
+        """
         a_data, b_data = get_task_data(context.input_data)
         plot_points = get_plot_points(b_data)
         if not plot_points:
@@ -100,6 +106,9 @@ class GraphTab(QWidget):
         p.end()
 
     def draw_ticks(self, offset: float, graph: QImage):
+        """
+        Draw ticks on graph
+        """
         width = self.paint_box.width()
         height = self.paint_box.height()
 
@@ -124,6 +133,10 @@ class GraphTab(QWidget):
         qp.end()
 
     def draw_lines(self, offset: float, graph: QImage, b_data: list[float]):
+        """
+        Draw solution lines on graph
+        """
+
         width = self.paint_box.width()
         height = self.paint_box.height()
 
@@ -161,6 +174,9 @@ class GraphTab(QWidget):
         qp.end()
 
     def draw_labels(self, offset: float, graph: QImage, b_data: list[float]):
+        """
+        Draw labels on graph
+        """
         width = self.paint_box.width()
         height = self.paint_box.height()
 
@@ -209,6 +225,9 @@ class GraphTab(QWidget):
         min_point: tuple[float, float],
         max_point: tuple[float, float]
     ):
+        """
+        Draw solution points on graph
+        """
         height = self.paint_box.height()
 
         x_0 = offset
@@ -238,6 +257,9 @@ class GraphTab(QWidget):
         qp.end()
 
     def draw_polygon(self, offset: float, graph: QImage, points: list[tuple[float, float]]):
+        """
+        Draw solution polygon on graph
+        """
         height = self.paint_box.height()
 
         centroid = tuple(map(lambda l: sum(l) / len(l), zip(*points)))
@@ -262,6 +284,9 @@ class GraphTab(QWidget):
         qp.end()
 
     def draw_vector(self, offset: float, graph: QImage, a_data: list[float]):
+        """
+        Draw solution vector on graph
+        """
         height = self.paint_box.height()
 
         x_1 = a_data[0]-a_data[2]-a_data[3]+a_data[5]

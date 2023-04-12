@@ -64,31 +64,45 @@ class AnswerTable(BaseTable):
 
 
 class TaskTab(QWidget):
+    """
+    A widget that displays and edits task data and its solution.
+    """
+
     def __init__(self, parent: QWidget):
+        """
+        Initialize the widget with the given parent.
+
+        Parameters:
+        parent (QWidget): The parent widget of this widget.
+        """
         super().__init__(parent)
         self.init_widgets()
 
     def init_widgets(self):
-        # create grid layout for tab widgets
+        """
+        Create and set up the widgets for the tab.
+        """
+        # Create a grid layout for the tab widgets.
         layout = QGridLayout()
         layout.setSpacing(15)
-        # set stretching (size of widgets areas)
+
+        # Set stretching (size of widgets areas)
         layout.setRowStretch(0, 0)
         layout.setRowStretch(1, 1)
         layout.setRowStretch(2, 0)
         layout.setRowStretch(3, 1)
 
-        # set widgets
+        # Set up widgets
         self.task_data_title = QLabel('Условие')
         layout.addWidget(self.task_data_title, 0, 0)
 
         self.clear_table_button = QPushButton('Очистить', self)
         self.clear_table_button.setCursor(Qt.PointingHandCursor)
-        self.clear_table_button.clicked.connect(self.clear_tables)  # type: ignore
+        self.clear_table_button.clicked.connect(self.clear_tables)
         layout.addWidget(self.clear_table_button, 0, 2)
 
         self.task_data_table = TaskDataTable(self)
-        self.task_data_table.cellChanged.connect(self.update_answer)  # type: ignore
+        self.task_data_table.cellChanged.connect(self.update_answer)
         layout.addWidget(self.task_data_table, 1, 0, 1, 0)
 
         self.answer_title = QLabel('Решение')
@@ -96,7 +110,7 @@ class TaskTab(QWidget):
 
         self.change_solve_mode_button = QPushButton('Максимум', self)
         self.change_solve_mode_button.setCursor(Qt.PointingHandCursor)
-        self.change_solve_mode_button.clicked.connect(self.change_solve_mode)  # type: ignore
+        self.change_solve_mode_button.clicked.connect(self.change_solve_mode)
         layout.addWidget(self.change_solve_mode_button, 2, 2)
 
         self.answer_table = AnswerTable(self)
@@ -105,6 +119,9 @@ class TaskTab(QWidget):
         self.setLayout(layout)
 
     def change_solve_mode(self):
+        """
+        Change the solve mode between 'Maximum' and 'Minimum'.
+        """
         if context.solve_mode == 'Maximum':
             context.solve_mode = 'Minimum'
             self.change_solve_mode_button.setText('Минимум')
@@ -115,10 +132,16 @@ class TaskTab(QWidget):
         self.update_answer()
 
     def clear_tables(self):
+        """
+        Clear the task data table and the answer table.
+        """
         self.task_data_table.clear_data()
         self.answer_table.clear_data()
 
     def update_answer(self):
+        """
+        Updates the answer table with the results of solving the task.
+        """
         context.input_data = self.task_data_table.get_data()
         context.data_align = get_data_align(context.input_data)
 
@@ -136,6 +159,9 @@ class TaskTab(QWidget):
             context.answer_xs, context.answer_b_data, context.answer_f, context.answer_endless = xs, b_data, f, endless
 
     def view_answer(self, b_data: list[float], xs: list[float], f: float, endless: bool):
+        """
+        Displays the answer table with the given data.
+        """
         self.answer_table.clear_data()
 
         if context.data_align == 'Vertical':
