@@ -1,3 +1,5 @@
+> This is my old school project, so code is very bad. I'm not going to fix it, but I'm going to leave it here for historical reasons.
+
 # Build
 
 1. Clone repo: `git clone https://github.com/mamsdeveloper/SimplexNG.git`
