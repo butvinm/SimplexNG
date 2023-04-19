@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
         self.init_widgets()
 
         self.setMinimumSize(500, 900)
-        self.setWindowTitle('Simplex')
+        self.setWindowTitle('Вектор')
         self.setWindowIcon(QIcon(get_path('assets/icon.ico')))
 
         height = QGuiApplication.primaryScreen().geometry().height()

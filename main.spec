@@ -31,7 +31,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='Simplex',
+    name='Вектор',
     debug=True,
     bootloader_ignore_signals=False,
     strip=False,
